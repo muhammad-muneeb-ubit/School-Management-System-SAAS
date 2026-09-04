@@ -28,6 +28,8 @@ export default function DashboardLayout({ children }) {
       { name: 'Exams', icon: ClipboardList, path: '/principal/exams' },
       { name: 'Fees', icon: CreditCard, path: '/principal/fees' },
       { name: 'Communication', icon: MessageSquare, path: '/principal/communication' },
+      { name: 'Users', icon: Users, path: '/principal/users' },
+      { name: 'Logs', icon: ClipboardList, path: '/principal/logs' },
     ];
   } else if (user?.role === 'Teacher') {
     menuItems = [

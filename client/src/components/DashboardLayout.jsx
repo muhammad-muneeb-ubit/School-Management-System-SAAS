@@ -45,6 +45,12 @@ export default function DashboardLayout({ children }) {
       { name: 'Fees', icon: CreditCard, path: '/parent/fees' },
       { name: 'Announcements', icon: MessageSquare, path: '/parent/announcements' },
     ];
+  } else if (user?.role === 'Super Admin') {
+    menuItems = [
+      { name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
+      { name: 'Manage Principals', icon: Users, path: '/admin/principals' },
+      { name: 'View Logs', icon: ClipboardList, path: '/admin/logs' },
+    ];
   }
 
   return (

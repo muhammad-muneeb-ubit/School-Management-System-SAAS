@@ -19,6 +19,7 @@ export default function Login() {
         if (user.role === 'Principal') navigate('/principal');
         else if (user.role === 'Teacher') navigate('/teacher');
         else if (user.role === 'Parent') navigate('/parent');
+        else if (user.role === 'Super Admin') navigate('/admin');
       }
     } catch (err) {
       console.error(err);

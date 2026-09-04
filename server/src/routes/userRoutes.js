@@ -5,6 +5,5 @@ import { protect, authorize } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Principal resets password for any user (Teacher/Parent)
-router.put('/:id/reset-password', protect, authorize('Principal'), resetUserPassword);
-
+router.put('/:id/reset-password', protect, authorize('Super Admin', 'Principal'), resetUserPassword);
 export default router;

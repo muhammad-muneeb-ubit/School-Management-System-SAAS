@@ -22,7 +22,11 @@ import ParentAnnouncements from './pages/parent/ParentAnnouncements';
 import ParentFees from './pages/parent/ParentFees';
 import ParentAttendance from './pages/parent/ParentAttendance';
 import ParentResults from './pages/parent/ParentResults';
-
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import PrincipalManagement from './pages/super-admin/PrincipalManagement';
+import PrincipalLogs from './pages/principal/PrincipalLogs';
+import UserManagement from './pages/principal/UserManagement';
+import SuperAdminLogs from './pages/super-admin/SuperAdminLogs';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -38,6 +42,11 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
+        {/* Super Admin Routes */}
+        <Route path="/admin" element={<ProtectedRoute element={<SuperAdminDashboard />} allowedRoles={['Super Admin']} />} />
+        <Route path="/admin/logs" element={<ProtectedRoute element={<SuperAdminLogs />} allowedRoles={['Super Admin']} />} /> 
+        <Route path="/admin/principals" element={<ProtectedRoute element={<PrincipalManagement />} allowedRoles={['Super Admin']} />} />
+
         {/* Principal Routes */}
         <Route path="/principal" element={<ProtectedRoute element={<PrincipalDashboard />} allowedRoles={['Principal']} />} />
         <Route path="/principal/academics" element={<ProtectedRoute element={<AcademicManagement />} allowedRoles={['Principal']} />} />
@@ -47,6 +56,9 @@ export default function App() {
         <Route path="/principal/exams" element={<ProtectedRoute element={<Exams />} allowedRoles={['Principal', 'Teacher']} />} />
         <Route path="/principal/fees" element={<ProtectedRoute element={<FeeManagement />} allowedRoles={['Principal']} />} />
         <Route path="/principal/communication" element={<ProtectedRoute element={<Communication />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/logs" element={<ProtectedRoute element={<PrincipalLogs />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/users" element={<ProtectedRoute element={<UserManagement />} allowedRoles={['Principal']} />} />
+
 
         {/* Teacher & Parent Routes (Still placeholders) */}
         <Route path="/teacher" element={<ProtectedRoute element={<TeacherDashboard />} allowedRoles={['Teacher']} />} />

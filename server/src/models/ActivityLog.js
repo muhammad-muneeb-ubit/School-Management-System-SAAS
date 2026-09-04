@@ -10,4 +10,8 @@ const activityLogSchema = new mongoose.Schema({
     changes: { type: Object } // Store the modified document details
 });
 
+// Auto-delete logs after 45 days (45 * 24 * 60 * 60 = 3888000 seconds)
+activityLogSchema.index({ timestamp: 1 }, { expireAfterSeconds: 3888000 });
+
+
 export default mongoose.model('ActivityLog', activityLogSchema);

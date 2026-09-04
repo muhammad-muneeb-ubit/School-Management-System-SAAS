@@ -1,122 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { loadUser } from './features/auth/authSlice';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Login from './pages/Login';
+import Unauthorized from './pages/Unauthorized';
+import PrincipalDashboard from './pages/PrincipalDashboard';
+import StudentManagement from './pages/principal/StudentManagement';
+import ParentDashboard from './pages/ParentDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import AcademicManagement from './pages/principal/AcademicManagement';
+import TeacherManagement from './pages/principal/TeacherManagement';
+import Attendance from './pages/Attendance';
+import FeeManagement from './pages/principal/FeeManagement';
+import Communication from './pages/principal/Communication';
+import Exams from './pages/Exams'; // Reusing the Exams UI for teachers
+import TeacherDashboard from './pages/TeacherDashboard';
+import TeacherClasses from './pages/teacher/TeacherClasses';
+import TeacherHomework from './pages/teacher/TeacherHomework';
+import ParentAnnouncements from './pages/parent/ParentAnnouncements';
+import ParentFees from './pages/parent/ParentFees';
+import ParentAttendance from './pages/parent/ParentAttendance';
+import ParentResults from './pages/parent/ParentResults';
+
+
+export default function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, [dispatch]);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+      <Routes>
+        <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="/" element={<Login />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-      <div className="ticks"></div>
+        {/* Principal Routes */}
+        <Route path="/principal" element={<ProtectedRoute element={<PrincipalDashboard />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/academics" element={<ProtectedRoute element={<AcademicManagement />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/students" element={<ProtectedRoute element={<StudentManagement />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/teachers" element={<ProtectedRoute element={<TeacherManagement />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/attendance" element={<ProtectedRoute element={<Attendance />} allowedRoles={['Principal', 'Teacher']} />} />
+        <Route path="/principal/exams" element={<ProtectedRoute element={<Exams />} allowedRoles={['Principal', 'Teacher']} />} />
+        <Route path="/principal/fees" element={<ProtectedRoute element={<FeeManagement />} allowedRoles={['Principal']} />} />
+        <Route path="/principal/communication" element={<ProtectedRoute element={<Communication />} allowedRoles={['Principal']} />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Teacher & Parent Routes (Still placeholders) */}
+        <Route path="/teacher" element={<ProtectedRoute element={<TeacherDashboard />} allowedRoles={['Teacher']} />} />
+        <Route path="/teacher/classes" element={<ProtectedRoute element={<TeacherClasses />} allowedRoles={['Teacher']} />} />
+        <Route path="/teacher/attendance" element={<ProtectedRoute element={<Attendance />} allowedRoles={['Teacher']} />} />
+        <Route path="/teacher/marks" element={<ProtectedRoute element={<Exams />} allowedRoles={['Teacher']} />} />
+        <Route path="/teacher/homework" element={<ProtectedRoute element={<TeacherHomework />} allowedRoles={['Teacher']} />} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <Route path="/parent" element={<ProtectedRoute element={<ParentDashboard />} allowedRoles={['Parent']} />} />
+        <Route path="/parent/announcements" element={<ProtectedRoute element={<ParentAnnouncements />} allowedRoles={['Parent']} />} />
+        <Route path="/parent/fees" element={<ProtectedRoute element={<ParentFees />} allowedRoles={['Parent']} />} />
+        <Route path="/parent/attendance" element={<ProtectedRoute element={<ParentAttendance />} allowedRoles={['Parent']} />} />
+        <Route path="/parent/results" element={<ProtectedRoute element={<ParentResults />} allowedRoles={['Parent']} />} />
+
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App

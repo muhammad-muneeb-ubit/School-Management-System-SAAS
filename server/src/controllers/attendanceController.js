@@ -1,13 +1,14 @@
 import Attendance from '../models/Attendance.js';
 import AcademicSession from '../models/AcademicSession.js';
 import Student from '../models/Student.js';
+import ActivityLog from '../models/ActivityLog.js';
 
 // @desc    Teacher marks/updates attendance for a class
 // @route   POST /api/attendance
 export const markAttendance = async (req, res, next) => {
     try {
         const { classId, sectionId, date, records } = req.body;
-        
+
         // 1. Find Current Academic Session
         const currentSession = await AcademicSession.findOne({ status: 'current' });
         if (!currentSession) return res.status(400).json({ error: 'No active academic session.' });
@@ -16,8 +17,8 @@ export const markAttendance = async (req, res, next) => {
         const attendance = await Attendance.findOneAndUpdate(
             { classId, sectionId, date: new Date(date) }, // Search criteria
             {
-                $set: { 
-                    records: records, 
+                $set: {
+                    records: records,
                     markedBy: req.user._id,
                     academicSessionId: currentSession._id,
                     branchId: req.user.branchId
@@ -25,6 +26,14 @@ export const markAttendance = async (req, res, next) => {
             },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
+        await ActivityLog.create({
+            action: 'mark attendance',
+            entity: 'Attendance',
+            entityId: attendance._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Marked attendance for class ${classId} section ${sectionId} on ${date}` }
+        });
 
         res.status(200).json({ message: 'Attendance saved successfully', attendance });
     } catch (error) {
@@ -37,7 +46,7 @@ export const markAttendance = async (req, res, next) => {
 export const getAttendanceByDate = async (req, res, next) => {
     try {
         const { classId, sectionId, date } = req.query;
-        
+
         const attendance = await Attendance.findOne({
             classId,
             sectionId,

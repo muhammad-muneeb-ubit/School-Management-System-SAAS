@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
+import { showSuccess, showError } from '../../utils/sweetAlert';
+import Tooltip from '../../components/Tooltip';
 
 export default function TeacherHomework() {
   const [homeworks, setHomeworks] = useState([]);
@@ -38,11 +40,11 @@ export default function TeacherHomework() {
     setLoading(true);
     try {
       await api.post('/communication/homework', formData);
-      alert('Homework posted!');
+      showSuccess('Homework posted!');
       setShowModal(false);
       fetchHomeworks();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to post homework');
+      showError(err.response?.data?.error || 'Failed to post homework');
     } finally {
       setLoading(false);
     }
@@ -96,18 +98,24 @@ export default function TeacherHomework() {
                     required
                   >
                     <option value="">Select Class/Subject</option>
-                    {assignments.map((a, i) => (
+                    {assignments.length>0? assignments.map((a, i) => (
                       <option key={i} value={i}>{a.classId?.name} - {a.subjectId?.name}</option>
-                    ))}
+                    )) : (
+                      <option disabled>Create assignments first</option>
+                    )}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>
-                  <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border p-2 rounded" required />
+                  <Tooltip text="Enter the title of the new homework.">
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border p-2 rounded" required />
+                  </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Description</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full border p-2 rounded" required></textarea>
+                  <Tooltip text="Provide a brief description or instructions for the homework.">
+                    <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full border p-2 rounded" required></textarea>
+                  </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Due Date</label>

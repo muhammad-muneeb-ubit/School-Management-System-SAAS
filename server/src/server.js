@@ -23,6 +23,9 @@ import logRoutes from './routes/logRoutes.js';
 import archiveRoutes from './routes/archiveRoutes.js';
 import pdfRoutes from './routes/pdfRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+
+
+
 import { sanitizeData } from './middleware/sanitizeMiddleware.js';  
 
 
@@ -56,7 +59,7 @@ app.use(express.json());
 
 // 3. CORS Config (Allows cookies from frontend)
 app.use(cors({
-    origin: 'http://localhost:5173', // Your Vite frontend URL
+    origin: ['http://localhost:5173', 'http://muneeb-sms.vercel.app'], // Your Vite frontend URL
     credentials: true // CRITICAL: Allows the browser to send/receive HttpOnly cookies
 }));
 

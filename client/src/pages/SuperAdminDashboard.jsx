@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import SuperAdminLayout from '../components/SuperAdminLayout';
 import api from '../services/api';
+import { showSuccess, showError } from '../utils/sweetAlert';
+import Tooltip from '../components/Tooltip';
 
 export default function SuperAdminDashboard() {
   const [maxBranches, setMaxBranches] = useState(3);
@@ -38,10 +40,10 @@ export default function SuperAdminDashboard() {
     setLoading(true);
     try {
       await api.put('/admin/settings/max-branches', { maxBranches: Number(maxBranches) });
-      alert('Branch limit updated successfully!');
+      showSuccess('Branch limit updated successfully!');
       fetchSystemData();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to update limit');
+      showError(err.response?.data?.error || 'Failed to update limit');
     } finally {
       setLoading(false);
     }
@@ -52,11 +54,11 @@ export default function SuperAdminDashboard() {
     setLoading(true);
     try {
       await api.post('/admin/branches', branchForm);
-      alert('Branch created successfully!');
+      showSuccess('Branch created successfully!');
       setBranchForm({ name: '', address: '' });
       fetchSystemData();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to create branch');
+      showError(err.response?.data?.error || 'Failed to create branch');
     } finally {
       setLoading(false);
     }
@@ -114,22 +116,26 @@ export default function SuperAdminDashboard() {
           <form onSubmit={handleCreateBranch}>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Branch Name</label>
-              <input 
-                type="text" 
-                value={branchForm.name} 
-                onChange={(e) => setBranchForm({ ...branchForm, name: e.target.value })} 
-                className="w-full border p-2 rounded" 
+              <Tooltip text="Enter the name of the new branch." >
+                <input 
+                  type="text" 
+                  value={branchForm.name} 
+                  onChange={(e) => setBranchForm({ ...branchForm, name: e.target.value })} 
+                  className="w-full border p-2 rounded" 
                 required 
               />
+            </Tooltip>
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Address</label>
+              <Tooltip text="Enter the physical address of the new branch." >
               <input 
                 type="text" 
                 value={branchForm.address} 
                 onChange={(e) => setBranchForm({ ...branchForm, address: e.target.value })} 
                 className="w-full border p-2 rounded" 
               />
+            </Tooltip>
             </div>
             <button 
               type="submit" 

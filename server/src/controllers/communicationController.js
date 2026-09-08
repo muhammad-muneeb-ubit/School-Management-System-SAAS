@@ -1,7 +1,7 @@
 import Announcement from '../models/Announcement.js';
 import Homework from '../models/Homework.js';
 import Student from '../models/Student.js';
-
+import ActivityLog from '../models/ActivityLog.js';
 // --- ANNOUNCEMENTS ---
 
 // @desc    Principal posts an announcement
@@ -9,7 +9,7 @@ import Student from '../models/Student.js';
 export const createAnnouncement = async (req, res, next) => {
     try {
         const { title, message, audience, classId } = req.body;
-        
+
         const announcement = await Announcement.create({
             title,
             message,
@@ -18,7 +18,14 @@ export const createAnnouncement = async (req, res, next) => {
             branchId: req.user.branchId,
             createdBy: req.user._id
         });
-
+        await ActivityLog.create({
+            action: 'Create Announcement',
+            entity: 'Announcement',
+            entityId: announcement._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Created announcement: ${title}` }
+        });
         res.status(201).json(announcement);
     } catch (error) {
         next(error);
@@ -30,7 +37,7 @@ export const createAnnouncement = async (req, res, next) => {
 export const getAnnouncements = async (req, res, next) => {
     try {
         let filter = { branchId: req.user.branchId };
-        
+
         // If Student, get School-wide + their specific class announcements
         if (req.user.role === 'Student') {
             const student = await Student.findOne({ _id: req.user._id }); // Assuming Student User ID matches Student profile ID for simplicity
@@ -65,7 +72,7 @@ export const getAnnouncements = async (req, res, next) => {
 export const createHomework = async (req, res, next) => {
     try {
         const { title, description, dueDate, classId, sectionId, subjectId } = req.body;
-        
+
         const homework = await Homework.create({
             title,
             description,
@@ -76,7 +83,14 @@ export const createHomework = async (req, res, next) => {
             branchId: req.user.branchId,
             createdBy: req.user._id
         });
-
+        await ActivityLog.create({
+            action: 'Create Homework',
+            entity: 'Homework',
+            entityId: homework._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Created homework: ${title}` }
+        });
         res.status(201).json(homework);
     } catch (error) {
         next(error);
@@ -88,7 +102,7 @@ export const createHomework = async (req, res, next) => {
 export const getHomework = async (req, res, next) => {
     try {
         let filter = { branchId: req.user.branchId };
-        
+
         if (req.user.role === 'Student') {
             const student = await Student.findOne({ _id: req.user._id });
             if (student) {
@@ -100,7 +114,7 @@ export const getHomework = async (req, res, next) => {
             const children = await Student.find({ _id: { $in: req.user.children } });
             const classIds = children.map(c => c.classId);
             const sectionIds = children.map(c => c.sectionId);
-            
+
             filter.classId = { $in: classIds };
             filter.sectionId = { $in: sectionIds };
         } else if (req.user.role === 'Teacher') {
@@ -113,7 +127,7 @@ export const getHomework = async (req, res, next) => {
             .populate('sectionId', 'name')
             .populate('subjectId', 'name')
             .sort({ dueDate: 1 });
-            
+
         res.json(homeworks);
     } catch (error) {
         next(error);

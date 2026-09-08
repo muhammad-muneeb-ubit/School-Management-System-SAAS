@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Principal routes
 router.post('/', protect, authorize('Principal'), createExam);
-router.put('/:examId/publish', protect, authorize('Principal'), publishResults);
+router.put('/:examId/publish', protect, authorize('Principal', 'Teacher'), publishResults);
 router.post('/', protect, authorize('Teacher', 'Principal'), protectArchivedSession, markAttendance);
 // Teacher route
 router.put('/:examId/marks', protect, authorize('Teacher', 'Principal'), enterMarks);

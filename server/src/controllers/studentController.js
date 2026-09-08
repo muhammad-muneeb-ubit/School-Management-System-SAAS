@@ -1,15 +1,15 @@
 import Student from '../models/Student.js';
 import User from '../models/User.js';
 import AcademicSession from '../models/AcademicSession.js';
-
+import ActivityLog from '../models/ActivityLog.js';
 // @desc    Admit a new student
 // @route   POST /api/students
 export const admitStudent = async (req, res) => {
     try {
-        const { 
-            firstName, lastName, rollNumber, gender, dob, 
-            classId, sectionId, 
-            parentFirstName, parentLastName, parentEmail, parentPhone 
+        const {
+            firstName, lastName, rollNumber, gender, dob,
+            classId, sectionId,
+            parentFirstName, parentLastName, parentEmail, parentPhone
         } = req.body;
 
         // 1. Find Current Academic Session
@@ -36,7 +36,7 @@ export const admitStudent = async (req, res) => {
             gender,
             dob,
             classId,
-            sectionId : sectionId || null, // Section is optional
+            sectionId: sectionId || null, // Section is optional
             parentId: parent._id,
             branchId: req.user.branchId,
             academicSessionId: currentSession._id
@@ -45,11 +45,19 @@ export const admitStudent = async (req, res) => {
         // 4. Add student to Parent's children array
         parent.children.push(student._id);
         await parent.save();
+        await ActivityLog.create({
+            action: 'create',
+            entity: 'Student',
+            entityId: student._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Admitted student ${student.firstName} ${student.lastName}` }
+        });
 
-        res.status(201).json({ 
-            message: 'Student admitted successfully', 
-            student, 
-            parentEmail: parent.email 
+        res.status(201).json({
+            message: 'Student admitted successfully',
+            student,
+            parentEmail: parent.email
         });
 
     } catch (error) {
@@ -63,7 +71,7 @@ export const getStudents = async (req, res) => {
     try {
         const { classId, sectionId } = req.query;
         const filter = { branchId: req.user.branchId };
-        
+
         if (classId) filter.classId = classId;
         if (sectionId) filter.sectionId = sectionId;
 
@@ -71,7 +79,7 @@ export const getStudents = async (req, res) => {
             .populate('classId', 'name')
             .populate('sectionId', 'name')
             .populate('parentId', 'email');
-            
+
         res.json(students);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -107,6 +115,21 @@ export const updateStudentStatus = async (req, res, next) => {
         );
         if (!student) return res.status(404).json({ error: 'Student not found' });
         res.json({ message: 'Student status updated', student });
+    } catch (error) {
+        next(error);
+    }
+};
+// @desc    Get single student by ID with full details
+// @route   GET /api/students/:id
+export const getStudentById = async (req, res, next) => {
+    try {
+        const student = await Student.findById(req.params.id)
+            .populate('classId', 'name')
+            .populate('sectionId', 'name capacity')
+            .populate('parentId', 'email profile');
+            
+        if (!student) return res.status(404).json({ error: 'Student not found' });
+        res.json(student);
     } catch (error) {
         next(error);
     }

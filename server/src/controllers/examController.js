@@ -1,7 +1,7 @@
 import Exam from '../models/Exam.js';
 import ExamResult from '../models/ExamResult.js';
 import AcademicSession from '../models/AcademicSession.js';
-
+import ActivityLog from '../models/ActivityLog.js';
 // Helper function to calculate grade
 const calculateGrade = (percentage) => {
     if (percentage >= 90) return 'A+';
@@ -28,7 +28,14 @@ export const createExam = async (req, res, next) => {
             academicSessionId: currentSession._id,
             branchId: req.user.branchId
         });
-
+        await ActivityLog.create({
+                    action: 'Create Exam',
+                    entity: 'Exam',
+                    entityId: exam._id,
+                    performedBy: req.user._id,
+                    branchId: req.user.branchId,
+                    changes: { message: `Created exam: ${name}` }
+                });
         res.status(201).json(exam);
     } catch (error) {
         next(error);
@@ -47,7 +54,7 @@ export const enterMarks = async (req, res, next) => {
 
         // Find existing result or create a new one
         let result = await ExamResult.findOne({ examId, studentId });
-        
+
         if (!result) {
             result = new ExamResult({
                 examId,
@@ -99,7 +106,14 @@ export const publishResults = async (req, res, next) => {
             { examId },
             { status: 'Published' }
         );
-
+        await ActivityLog.create({
+            action: 'Publish Exam Results',
+            entity: 'ExamResult',
+            entityId: examId,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Exam results published` }
+        });
         res.json({ message: 'Exam results published successfully' });
     } catch (error) {
         next(error);
@@ -123,7 +137,7 @@ export const getStudentResult = async (req, res, next) => {
         const result = await ExamResult.findOne({ examId, studentId })
             .populate('marks.subjectId', 'name code')
             .populate('marks.enteredBy', 'email');
-            
+
         const exam = await Exam.findById(examId).select('name totalMarksPerSubject status');
 
         res.json({ exam, result });

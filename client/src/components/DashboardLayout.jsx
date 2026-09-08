@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../features/auth/authSlice';
-import { LayoutDashboard, Users, GraduationCap, BookOpen, CalendarDays, CreditCard, LogOut, Menu, X, MessageSquare, ClipboardList } from 'lucide-react';
+import { TrendingUp, LayoutDashboard, Users, Archive, GraduationCap, BookOpen, CalendarDays, CreditCard, LogOut, Menu, X, MessageSquare, ClipboardList } from 'lucide-react';
+
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -21,6 +22,7 @@ export default function DashboardLayout({ children }) {
   if (user?.role === 'Principal') {
     menuItems = [
       { name: 'Dashboard', icon: LayoutDashboard, path: '/principal' },
+      { name: 'Users', icon: Users, path: '/principal/users' },
       { name: 'Students', icon: Users, path: '/principal/students' },
       { name: 'Teachers', icon: GraduationCap, path: '/principal/teachers' },
       { name: 'Academics', icon: BookOpen, path: '/principal/academics' },
@@ -28,7 +30,9 @@ export default function DashboardLayout({ children }) {
       { name: 'Exams', icon: ClipboardList, path: '/principal/exams' },
       { name: 'Fees', icon: CreditCard, path: '/principal/fees' },
       { name: 'Communication', icon: MessageSquare, path: '/principal/communication' },
-      { name: 'Users', icon: Users, path: '/principal/users' },
+      { name: 'Timetable', icon: CalendarDays, path: '/principal/timetable' },
+      { name: 'Promotion', icon: TrendingUp, path: '/principal/promotion' }, 
+      { name: 'Data Archive', icon: Archive, path: '/principal/archive' },
       { name: 'Logs', icon: ClipboardList, path: '/principal/logs' },
     ];
   } else if (user?.role === 'Teacher') {
@@ -38,6 +42,7 @@ export default function DashboardLayout({ children }) {
       { name: 'Mark Attendance', icon: CalendarDays, path: '/teacher/attendance' },
       { name: 'Enter Marks', icon: ClipboardList, path: '/teacher/marks' },
       { name: 'Homework', icon: ClipboardList, path: '/teacher/homework' },
+      { name: 'Timetable', icon: CalendarDays, path: '/teacher/timetable' },
     ];
   } else if (user?.role === 'Parent') {
     menuItems = [
@@ -46,6 +51,7 @@ export default function DashboardLayout({ children }) {
       { name: 'Results', icon: ClipboardList, path: '/parent/results' },
       { name: 'Fees', icon: CreditCard, path: '/parent/fees' },
       { name: 'Announcements', icon: MessageSquare, path: '/parent/announcements' },
+      { name: 'Timetable', icon: CalendarDays, path: '/parent/timetable' },
     ];
   } else if (user?.role === 'Super Admin') {
     menuItems = [

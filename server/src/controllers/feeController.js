@@ -2,6 +2,7 @@ import FeeStructure from '../models/FeeStructure.js';
 import Fee from '../models/Fee.js';
 import Student from '../models/Student.js';
 import AcademicSession from '../models/AcademicSession.js';
+import ActivityLog from '../models/ActivityLog.js';
 
 // @desc    Principal sets fee structure for a class
 // @route   POST /api/fees/structure
@@ -16,6 +17,14 @@ export const createFeeStructure = async (req, res, next) => {
             { amount, frequency, branchId: req.user.branchId },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
+        await ActivityLog.create({
+            action: 'create fee structure',
+            entity: 'FeeStructure',
+            entityId: structure._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Created/Updated fee structure for class ${classId}` }
+        });
 
         res.status(201).json({ message: 'Fee structure saved', structure });
     } catch (error) {
@@ -56,6 +65,14 @@ export const generateMonthlyFees = async (req, res, next) => {
                 createdCount++;
             }
         }
+        await ActivityLog.create({
+            action: 'generate monthly fees',
+            entity: 'Fee',
+            entityId: null, // Since multiple fees are created, you might want to log differently
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Generated ${createdCount} fee invoices for ${month} in class ${classId}` }
+        });
 
         res.status(201).json({ message: `Generated ${createdCount} fee invoices for ${month}.` });
     } catch (error) {
@@ -68,7 +85,7 @@ export const generateMonthlyFees = async (req, res, next) => {
 export const recordPayment = async (req, res, next) => {
     try {
         const { amountPaid } = req.body;
-        
+
         // 1. Fetch the document first
         const fee = await Fee.findById(req.params.id);
         if (!fee) return res.status(404).json({ error: 'Fee invoice not found' });
@@ -84,7 +101,7 @@ export const recordPayment = async (req, res, next) => {
 
         // 4. Recalculate totals and status
         fee.amountPaid = fee.payments.reduce((acc, p) => acc + p.amount, 0);
-        
+
         if (fee.amountPaid >= fee.totalAmount) {
             fee.status = 'Paid';
         } else if (fee.amountPaid > 0) {
@@ -95,7 +112,15 @@ export const recordPayment = async (req, res, next) => {
 
         // 5. Save will trigger the audit plugin's post('save') hook automatically!
         await fee.save();
-        
+        await ActivityLog.create({
+            action: 'fee payment',
+            entity: 'Fee',
+            entityId: fee._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Recorded payment of Rs ${amountPaid} for ${fee.month}` }
+        });
+
         res.json({ message: 'Payment recorded successfully', fee });
     } catch (error) {
         next(error);
@@ -128,7 +153,7 @@ export const getAllFees = async (req, res, next) => {
     try {
         const { classId, month } = req.query;
         const filter = { branchId: req.user.branchId };
-        
+
         if (classId) filter.classId = classId;
         if (month) filter.month = month;
 
@@ -136,7 +161,7 @@ export const getAllFees = async (req, res, next) => {
             .populate('studentId', 'firstName lastName rollNumber')
             .populate('classId', 'name')
             .sort({ month: -1 });
-            
+
         res.json(fees);
     } catch (error) {
         next(error);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
+import { showSuccess, showError } from '../../utils/sweetAlert';
 
 export default function Communication() {
   const [announcements, setAnnouncements] = useState([]);
@@ -42,11 +43,11 @@ export default function Communication() {
       // If audience is School, don't send classId
       const payload = formData.audience === 'School' ? { ...formData, classId: '' } : formData;
       await api.post('/communication/announcements', payload);
-      alert('Announcement posted!');
+      showSuccess('Announcement posted!');
       setShowModal(false);
       fetchAnnouncements();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to post announcement');
+      showError(err.response?.data?.error || 'Failed to post announcement');
     } finally {
       setLoading(false);
     }
@@ -94,11 +95,15 @@ export default function Communication() {
               <div className="space-y-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>
-                  <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border p-2 rounded" required />
+                  <Tooltip text="Enter a title for your announcement.">
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border p-2 rounded" required />
+                  </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Message</label>
-                  <textarea name="message" value={formData.message} onChange={handleChange} rows="4" className="w-full border p-2 rounded" required></textarea>
+                  <Tooltip text="Enter the message for your announcement.">
+                    <textarea name="message" value={formData.message} onChange={handleChange} rows="4" className="w-full border p-2 rounded" required></textarea>
+                  </Tooltip>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -113,7 +118,7 @@ export default function Communication() {
                       <label className="block text-sm font-medium mb-1">Select Class</label>
                       <select name="classId" value={formData.classId} onChange={handleChange} className="w-full border p-2 rounded" required>
                         <option value="">Select Class</option>
-                        {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                        { classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option> }
                       </select>
                     </div>
                   )}

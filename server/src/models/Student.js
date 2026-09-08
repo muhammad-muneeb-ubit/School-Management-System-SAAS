@@ -3,7 +3,7 @@ import softDeletePlugin from '../middleware/softDeletePlugin.js';
 
 const studentSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    lastName: { type: String, required: false },
     rollNumber: { type: String, required: true },
     gender: { type: String, enum: ['Male', 'Female', 'Other'] },
     dob: { type: Date },

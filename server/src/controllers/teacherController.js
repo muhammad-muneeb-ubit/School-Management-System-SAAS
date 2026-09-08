@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import crypto from 'crypto';
-
+import ActivityLog from '../models/ActivityLog.js';
 
 // @desc    Principal creates a new Teacher account
 // @route   POST /api/teachers
@@ -23,6 +23,14 @@ export const createTeacher = async (req, res, next) => {
                 lastName: lastName || '',
                 phone: phone || ''
             }
+        });
+        await ActivityLog.create({
+            action: 'create teacher',
+            entity: 'Teacher',
+            entityId: teacher._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Created teacher ${firstName} ${lastName}` }
         });
 
         res.status(201).json({ message: 'Teacher created successfully', teacher });
@@ -53,7 +61,14 @@ export const assignTeacher = async (req, res, next) => {
             teacher.assignments.push({ classId, sectionId, subjectId });
             await teacher.save();
         }
-
+        await ActivityLog.create({
+            action: 'assign',
+            entity: 'Teacher',
+            entityId: teacher._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Assigned class ${classId} section ${sectionId} subject ${subjectId} to teacher ${teacher.profile.firstName} ${teacher.profile.lastName}` }
+        });
         res.json({ message: 'Assignment added successfully', assignments: teacher.assignments });
     } catch (error) {
         next(error);
@@ -96,16 +111,27 @@ export const getMyAssignments = async (req, res, next) => {
 // @route   PUT /api/users/:id/reset-password
 export const resetUserPassword = async (req, res, next) => {
     try {
+        const { password } = req.body; // Accept custom password
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
-        // Generate a random 8-character password
-        const tempPassword = crypto.randomBytes(4).toString('hex');
-        user.password = tempPassword; // Mongoose will hash this automatically via pre('save')
+        if (password) {
+            user.password = password;
+        } else {
+            // Fallback to random if none provided
+            const tempPassword = crypto.randomBytes(4).toString('hex');
+            user.password = tempPassword;
+        }
         await user.save();
-
-        // In a real app, you'd email this. For MVP, we return it to the Principal.
-        res.json({ message: 'Password reset successfully', tempPassword });
+        await ActivityLog.create({
+            action: 'reset user password',
+            entity: 'User',
+            entityId: user._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Reset password for user ${user.profile.firstName} ${user.profile.lastName}` }
+        });
+        res.json({ message: 'Password reset successfully' });
     } catch (error) {
         next(error);
     }
@@ -122,8 +148,17 @@ export const deleteTeacher = async (req, res, next) => {
         
         // This uses our 90-day soft delete plugin!
         await teacher.softDelete(); 
+        await ActivityLog.create({
+            action: 'delete',
+            entity: 'Teacher',
+            entityId: teacher._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Deactivated teacher ${teacher.profile.firstName} ${teacher.profile.lastName}` }
+        });
         res.json({ message: 'Teacher deactivated successfully' });
     } catch (error) {
         next(error);
     }
 };
+

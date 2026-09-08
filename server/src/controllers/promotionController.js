@@ -2,6 +2,7 @@ import PromotionRecommendation from '../models/PromotionRecommendation.js';
 import Enrollment from '../models/Enrollment.js';
 import AcademicSession from '../models/AcademicSession.js';
 import Student from '../models/Student.js';
+import ActivityLog from '../models/ActivityLog.js';
 
 // @desc    Teacher submits promotion recommendation
 // @route   POST /api/promotion/recommend
@@ -67,44 +68,54 @@ export const executePromotion = async (req, res, next) => {
             );
 
             // 2. Create new enrollment for the NEW session
-                    for (const rec of recommendations) {
-            // 1. Mark old enrollment as completed
-            await Enrollment.updateMany(
-                { studentId: rec.studentId, academicSessionId: currentSession._id, status: 'Active' },
-                { status: rec.recommendation === 'Pass' ? 'Promoted' : 'Retained' }
-            );
+            for (const rec of recommendations) {
+                // 1. Mark old enrollment as completed
+                await Enrollment.updateMany(
+                    { studentId: rec.studentId, academicSessionId: currentSession._id, status: 'Active' },
+                    { status: rec.recommendation === 'Pass' ? 'Promoted' : 'Retained' }
+                );
 
-            // 2. Create new enrollment for the NEW session
-            if (rec.recommendation === 'Pass') {
-                await Enrollment.create({
-                    studentId: rec.studentId,
-                    academicSessionId: targetSessionId,
-                    branchId: req.user.branchId,
-                    classId: promotedToClassId,
-                    status: 'Active'
-                    // sectionId is omitted intentionally; Principal can assign it later
-                });
-                promotedCount++;
-            } else {
-                // Retained: create enrollment in the SAME class for the new session
-                await Enrollment.create({
-                    studentId: rec.studentId,
-                    academicSessionId: targetSessionId,
-                    branchId: req.user.branchId,
-                    classId: retainedToClassId,
-                    status: 'Active'
-                });
-                retainedCount++;
+                // 2. Create new enrollment for the NEW session
+                if (rec.recommendation === 'Pass') {
+                    await Enrollment.create({
+                        studentId: rec.studentId,
+                        academicSessionId: targetSessionId,
+                        branchId: req.user.branchId,
+                        classId: promotedToClassId,
+                        status: 'Active'
+                        // sectionId is omitted intentionally; Principal can assign it later
+                    });
+                    await Student.findByIdAndUpdate(rec.studentId, { classId: promotedToClassId, academicSessionId: targetSessionId });
+                    promotedCount++;
+                } else {
+                    // Retained: create enrollment in the SAME class for the new session
+                    await Enrollment.create({
+                        studentId: rec.studentId,
+                        academicSessionId: targetSessionId,
+                        branchId: req.user.branchId,
+                        classId: retainedToClassId,
+                        status: 'Active'
+                    });
+                    await Student.findByIdAndUpdate(rec.studentId, { classId: retainedToClassId, academicSessionId: targetSessionId });
+                
+                    retainedCount++;
+                }
             }
-        }
         }
 
         // Archive the old session and set the new one as current
         await AcademicSession.findByIdAndUpdate(currentSession._id, { status: 'archived' });
         await AcademicSession.findByIdAndUpdate(targetSessionId, { status: 'current' });
-
-        res.json({ 
-            message: 'Promotion executed successfully', 
+        await ActivityLog.create({
+            action: 'update',
+            entity: 'Promotion',
+            entityId: currentSession._id,
+            performedBy: req.user._id,
+            branchId: req.user.branchId,
+            changes: { message: `Executed promotion. Promoted: ${promotedCount}, Retained: ${retainedCount}` }
+        });
+        res.json({
+            message: 'Promotion executed successfully',
             stats: { promoted: promotedCount, retained: retainedCount, graduated: graduatedCount }
         });
     } catch (error) {

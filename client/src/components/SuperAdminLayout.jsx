@@ -36,7 +36,7 @@ export default function SuperAdminLayout({ children }) {
         </nav>
 
         <div className="p-2 border-t border-gray-700">
-          <button onClick={() => { dispatch(logoutUser()); navigate('/login'); }} className="flex items-center space-x-2 p-2 rounded hover:bg-red-600 w-full transition">
+          <button onClick={() => { dispatch(logoutUser()); navigate('/'); }} className="flex items-center space-x-2 p-2 rounded hover:bg-red-600 w-full transition">
             <LogOut size={20} />
             {sidebarOpen && <span>Logout</span>}
           </button>

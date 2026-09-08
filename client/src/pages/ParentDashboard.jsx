@@ -13,14 +13,17 @@ export default function ParentDashboard() {
   // 1. Fetch children on mount
   useEffect(() => {
     const fetchChildren = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/students/my-children');
         setChildren(res.data);
         if (res.data.length > 0) {
           setSelectedChildId(res.data[0]._id); // Auto-select first child
         }
+        setLoading(false);
       } catch (err) {
         console.error(err);
+        setLoading(false);
       }
     };
     fetchChildren();
@@ -56,11 +59,11 @@ export default function ParentDashboard() {
           onChange={(e) => setSelectedChildId(e.target.value)}
           className="border p-2 rounded flex-1"
         >
-          {children.map((c) => (
+          {children.length>0? children.map((c) => (
             <option key={c._id} value={c._id}>
               {c.firstName} {c.lastName} ({c.classId?.name || 'No Class'})
             </option>
-          ))}
+          )): <option>No children available</option>}
         </select>
       </div>
 

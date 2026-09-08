@@ -1,7 +1,7 @@
 import express from 'express';
 import { 
     downloadStudentList, downloadAttendanceSheet, downloadFeeDefaulters, 
-    downloadFeeReceipt, downloadTimetable, downloadClassResult 
+    downloadFeeReceipt, downloadTimetable, downloadClassResult, downloadReportCard
 } from '../controllers/pdfController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
@@ -14,5 +14,5 @@ router.get('/fee-defaulters', protect, authorize('Principal'), downloadFeeDefaul
 router.get('/fee-receipt/:id', protect, authorize('Principal', 'Parent', 'Student'), downloadFeeReceipt);
 router.get('/timetable', protect, authorize('Principal', 'Teacher', 'Student', 'Parent'), downloadTimetable);
 router.get('/class-result', protect, authorize('Principal'), downloadClassResult);
-
+router.get('/report-card/:examId/:studentId', protect, authorize('Principal', 'Parent', 'Student'), downloadReportCard);
 export default router;

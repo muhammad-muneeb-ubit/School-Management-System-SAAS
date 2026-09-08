@@ -1,0 +1,4 @@
+firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFirstName,parentPhone
+Abuzar,Ali,010,Male,Grade 3,A,fasih@example.com,fasih,uddin,1234567890
+Arham,Ali,011,Male,Grade 3,A,asif@gmail.com,Muhammad,Asif,1234567890
+Muhammad,Nabeel,012,Male,Grade 3,A,khurram@example.com,Muhammad,Khurram,1234567890

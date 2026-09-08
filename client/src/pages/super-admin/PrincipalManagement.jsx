@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import SuperAdminLayout from '../../components/SuperAdminLayout';
 import api from '../../services/api';
+import Swal from 'sweetalert2';
+import { showSuccess, showError } from '../../utils/sweetAlert';
 
 export default function PrincipalManagement() {
   const [principals, setPrincipals] = useState([]);
@@ -30,27 +32,41 @@ export default function PrincipalManagement() {
     setLoading(true);
     try {
       await api.post('/admin/principal', formData);
-      alert('Principal created successfully!');
+      showSuccess('Principal created successfully!');
       setShowModal(false);
       setFormData({ email: '', password: 'Principal123!', branchId: '' });
       fetchData();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to create principal');
+      showError(err.response?.data?.error || 'Failed to create principal');
     } finally { 
       setLoading(false); 
     }
   };
 
-  const handleResetPassword = async (id) => {
-    if (window.confirm('Are you sure you want to reset this Principal\'s password? A new temporary password will be generated.')) {
-      try {
-        const res = await api.put(`/users/${id}/reset-password`);
-        alert(`Password reset successfully! New temp password: ${res.data.tempPassword}`);
-      } catch (err) { 
-        alert('Failed to reset password'); 
-      }
+const handleResetPassword = async (id) => {
+  const { value: password } = await Swal.fire({
+    title: 'Enter new password',
+    input: 'text',
+    inputPlaceholder: 'Enter the new password',
+    inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+    showCancelButton: true,
+    confirmButtonText: 'Reset Password',
+    showLoaderOnConfirm: true,
+    preConfirm: (pwd) => {
+      if (!pwd) Swal.showValidationMessage('Password cannot be empty');
+      return pwd;
     }
-  };
+  });
+
+  if (password) {
+    try {
+      await api.put(`/users/${id}/reset-password`, { password });
+      showSuccess('Password reset successfully.');
+    } catch (err) { 
+      showError('Failed to reset password.'); 
+    }
+  }
+};
 
   return (
     <SuperAdminLayout>
@@ -134,7 +150,9 @@ export default function PrincipalManagement() {
                   required
                 >
                   <option value="">Select Branch</option>
-                  {branches.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
+                  { branches.length>0? branches.map(b => <option key={b._id} value={b._id}>{b.name}</option>) : (
+                    <option disabled>Create branches first</option>
+                  )}
                 </select>
               </div>
               <div className="flex justify-end space-x-2 pt-2">

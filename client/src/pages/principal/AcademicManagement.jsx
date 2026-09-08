@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
+import { showSuccess, showError } from '../../utils/sweetAlert';
+import Tooltip from '../../components/Tooltip';
 
 export default function AcademicManagement() {
   const [classes, setClasses] = useState([]);
@@ -44,10 +46,11 @@ export default function AcademicManagement() {
     setLoading(true);
     try {
       await api.post('/academic/classes', classForm);
+      showSuccess('Class created successfully!');
       setClassForm({ name: '' });
       fetchClasses();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to create class');
+      showError(err.response?.data?.error || 'Failed to create class');
     } finally {
       setLoading(false);
     }
@@ -55,14 +58,15 @@ export default function AcademicManagement() {
 
   const handleSectionSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedClass) return alert('Please select a class first.');
+    if (!selectedClass) return showError('Please select a class first.');
     setLoading(true);
     try {
       await api.post(`/academic/classes/${selectedClass._id}/sections`, sectionForm);
+      showSuccess('Section created successfully!');
       setSectionForm({ name: '', capacity: 30 });
       handleClassSelect(selectedClass);
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to create section');
+      showError(err.response?.data?.error || 'Failed to create section');
     } finally {
       setLoading(false);
     }
@@ -70,14 +74,15 @@ export default function AcademicManagement() {
 
   const handleSubjectSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedClass) return alert('Please select a class first.');
+    if (!selectedClass) return showError('Please select a class first.');
     setLoading(true);
     try {
       await api.post(`/academic/classes/${selectedClass._id}/subjects`, subjectForm);
+      showSuccess('Subject created successfully!');
       setSubjectForm({ name: '', code: '' });
       handleClassSelect(selectedClass);
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to create subject');
+      showError(err.response?.data?.error || 'Failed to create subject');
     } finally {
       setLoading(false);
     }
@@ -92,15 +97,17 @@ export default function AcademicManagement() {
         <div className="bg-white p-4 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-4">Classes (Current Session)</h2>
           
-          <form onSubmit={handleClassSubmit} className="mb-4 flex gap-2">
+          <form onSubmit={handleClassSubmit} className="mb-4 flex gap-2" >
+            <Tooltip text="Create a class such as Grade 5 or Grade 8 for the current academic session.">
             <input 
               type="text" 
               placeholder="New Class (e.g., Grade 5)" 
               value={classForm.name} 
               onChange={(e) => setClassForm({ ...classForm, name: e.target.value })} 
-              className="flex-1 border p-2 rounded text-sm" 
+              className="flex-1 border p-2 "
               required 
             />
+            </Tooltip>
             <button type="submit" disabled={loading} className="bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700">Add</button>
           </form>
 
@@ -124,23 +131,29 @@ export default function AcademicManagement() {
         <div className="bg-white p-4 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-4">Sections {selectedClass ? `(${selectedClass.name})` : ''}</h2>
           
-          <form onSubmit={handleSectionSubmit} className="mb-4 flex gap-2">
+          <form onSubmit={handleSectionSubmit} className="mb-4 flex gap-2" >
+            <Tooltip text="Enter the section name for the selected class. For example, Section A,B,C .">
             <input 
               type="text" 
               placeholder="Section (e.g., A)" 
               value={sectionForm.name} 
               onChange={(e) => setSectionForm({ ...sectionForm, name: e.target.value })} 
-              className="w-16 border p-2 rounded text-sm" 
+              className="w-16 border p-2 rounded text-sm " 
               required 
             />
+            </Tooltip>
+
+            <Tooltip text="Enter the capacity for the selected class. For example, capacity of 30 students.">
             <input 
               type="number" 
               placeholder="Capacity" 
               value={sectionForm.capacity} 
               onChange={(e) => setSectionForm({ ...sectionForm, capacity: e.target.value })} 
-              className="w-20 border p-2 rounded text-sm" 
+              className="w-20 border p-2 rounded text-sm form-field-hint" 
+              data-tooltip="Set the maximum number of students allowed in this section."
               required 
-            />
+              />
+              </Tooltip>
             <button type="submit" disabled={loading} className="bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700">Add</button>
           </form>
 
@@ -160,23 +173,27 @@ export default function AcademicManagement() {
         <div className="bg-white p-4 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-4">Subjects {selectedClass ? `(${selectedClass.name})` : ''}</h2>
           
-          <form onSubmit={handleSubjectSubmit} className="mb-4 flex gap-2">
+          <form onSubmit={handleSubjectSubmit} className="mb-4 flex gap-2" >
+            <Tooltip text="Add a subject like Mathematics, Science, or English for the selected class.">
             <input 
               type="text" 
               placeholder="Subject (e.g., Math)" 
               value={subjectForm.name} 
               onChange={(e) => setSubjectForm({ ...subjectForm, name: e.target.value })} 
-              className="flex-1 border p-2 rounded text-sm" 
+              className="flex-1 border p-2 rounded text-sm " 
               required 
             />
+            </Tooltip>
+            <Tooltip text="Use a short code such as MTH or ENG to identify the subject in reports.">
             <input 
               type="text" 
               placeholder="Code (e.g., MTH)" 
               value={subjectForm.code} 
               onChange={(e) => setSubjectForm({ ...subjectForm, code: e.target.value })} 
-              className="w-16 border p-2 rounded text-sm" 
+              className="w-16 border p-2 rounded text-sm "
               required 
-            />
+              />
+              </Tooltip>
             <button type="submit" disabled={loading} className="bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700">Add</button>
           </form>
 

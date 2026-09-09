@@ -4,10 +4,11 @@ import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/sweetAlert';
 import Loader from '../../components/Loader';
+import { DashboardHeaderSkeleton, ClassSectionFilterSkeleton, TimetableSkeleton } from '../../components/skeletons';
 
 export default function TimetableManagement() {
   const { user } = useSelector((state) => state.auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Principal states
   const [classes, setClasses] = useState([]);
@@ -27,6 +28,7 @@ export default function TimetableManagement() {
   // Fetch Initial Data based on Role
   useEffect(() => {
     const fetchInitialData = async () => {
+      setLoading(true);
       try {
         if (user?.role === 'Parent') {
           const res = await api.get('/students/my-children');
@@ -39,11 +41,13 @@ export default function TimetableManagement() {
             setSelectedSection(firstChild.sectionId?._id);
           }
         } else if (user?.role === 'Principal') {
+          setLoading(true);
           const clsRes = await api.get('/academic/classes');
           setClasses(clsRes.data);
           const tchRes = await api.get('/teachers');
           setTeachers(tchRes.data);
         } else if (user?.role === 'Teacher') {
+          setLoading(true);
           const assignRes = await api.get('/teachers/my-assignments');
           if (assignRes.data.length > 0) {
             const firstAssign = assignRes.data[0];
@@ -52,6 +56,7 @@ export default function TimetableManagement() {
           }
         }
       } catch (err) { console.error(err); }
+      finally { setLoading(false); }
     };
     fetchInitialData();
   }, [user]);
@@ -87,11 +92,13 @@ export default function TimetableManagement() {
     setSelectedSection('');
     if (!classId) return;
     try {
+      setLoading(true);
       const secRes = await api.get(`/academic/classes/${classId}/sections`);
       setSections(secRes.data);
       const subRes = await api.get(`/academic/classes/${classId}/subjects`);
       setSubjects(subRes.data);
     } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const handleAddPeriod = async (e) => {
@@ -113,7 +120,7 @@ export default function TimetableManagement() {
           periods: [{ startTime: period.startTime, endTime: period.endTime, subjectId: period.subjectId, teacherId: period.teacherId }]
         });
       }
-
+      setLoading(true);
       await api.put('/academic/timetable', { classId: selectedClass, sectionId: selectedSection, schedule: updatedSchedule });
       showSuccess('Period added successfully!');
       setPeriod({ ...period, startTime: '', endTime: '' });
@@ -129,10 +136,22 @@ export default function TimetableManagement() {
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Timetable Management</h1>
+      {/* <h1 className="text-2xl font-bold text-gray-800 mb-6">Timetable Management</h1> */}
+      {loading ? (
+        <DashboardHeaderSkeleton />
+      ) : (
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+          Timetable Management
+        </h1>
+      )}
 
       {/* Dynamic Filters based on Role */}
-      {user?.role === 'Parent' ? (
+      {loading ? (
+        <>
+        <ClassSectionFilterSkeleton />
+        <TimetableSkeleton/>
+        </>
+      ) : (user?.role === 'Parent' ? (
         <div className="bg-white p-4 rounded-lg shadow mb-6">
           <label className="block text-sm font-medium mb-1">Select Child</label>
           <select value={selectedChild} onChange={(e) => handleChildChange(e.target.value)} className="w-full border p-2 rounded">
@@ -145,7 +164,7 @@ export default function TimetableManagement() {
             <label className="block text-sm font-medium mb-1">Class</label>
             <select value={selectedClass} onChange={handleClassChange} className="w-full border p-2 rounded">
               <option value="">Select Class</option>
-              { classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option> }
+              {classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option>}
             </select>
           </div>
           <div>
@@ -162,10 +181,10 @@ export default function TimetableManagement() {
             </select>
           </div>
         </div>
-      )}
+      ))}
 
       {/* Main Grid */}
-      <div className={`grid grid-cols-1 lg:grid-cols-${user?.role === 'Principal' ? '3' : '1'} gap-6`}>
+      {!loading && (<div className={`grid grid-cols-1 lg:grid-cols-${user?.role === 'Principal' ? '3' : '1'} gap-6`}>
 
         {/* Add Period Form (Principal Only) */}
         {user?.role === 'Principal' && (
@@ -185,7 +204,7 @@ export default function TimetableManagement() {
               </select>
               <select value={period.teacherId} onChange={(e) => setPeriod({ ...period, teacherId: e.target.value })} className="w-full border p-2 rounded" required>
                 <option value="">Select Teacher</option>
-                { teachers.length > 0 ? teachers.map(t => <option key={t._id} value={t._id}>{t.profile?.firstName} {t.profile?.lastName}</option>) : <option disabled>No teachers found</option> }
+                {teachers.length > 0 ? teachers.map(t => <option key={t._id} value={t._id}>{t.profile?.firstName} {t.profile?.lastName}</option>) : <option disabled>No teachers found</option>}
               </select>
               <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400">
                 {loading ? 'Saving...' : '+ Add Period'}
@@ -223,7 +242,7 @@ export default function TimetableManagement() {
             <p className="text-gray-500 text-center py-4">No timetable created yet.</p>
           )}
         </div>
-      </div>
+      </div>)}
     </DashboardLayout>
   );
 }

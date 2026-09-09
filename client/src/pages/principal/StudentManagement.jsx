@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import Tooltip from '../../components/Tooltip';
 import { downloadFile } from '../../utils/downloadFile';
-
+import { SearchBarSkeleton, TableSkeleton, HeadingWithButtonSkeleton } from '../../components/skeletons';
 
 export default function StudentManagement() {
   const [students, setStudents] = useState([]);
@@ -21,17 +21,26 @@ export default function StudentManagement() {
   });
 
   const fetchStudents = async () => {
+    setLoading(true);
     try {
       const res = await api.get('/students');
       setStudents(res.data);
+
     } catch (err) { console.error(err); }
+    finally {
+      setLoading(false);
+    }
   };
 
   const fetchClasses = async () => {
+    setLoading(true);
     try {
       const res = await api.get('/academic/classes');
       setClasses(res.data);
     } catch (err) { console.error(err); }
+    finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -123,92 +132,99 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Student Management</h1>
-        <div className="flex space-x-2">
-          <button onClick={showCsvHelp} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 font-medium flex items-center">
-            CSV Help
-          </button>
-          <input type="file" accept=".csv" onChange={handleFileUpload} className="hidden" id="csv-upload" />
-          <label htmlFor="csv-upload" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium cursor-pointer">
-            Bulk Import CSV
-          </label>
-          <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
-            + Admit Student
-          </button>
-          <button
-            onClick={() => downloadFile(`/pdf/students`, 'All_Students_List.pdf')}
-            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium"
-          >
-            Download List PDF
-          </button>
-        </div>
-      </div>
 
-      {/* Search Bar */}
-      <div className="bg-white p-4 rounded-lg shadow mb-4">
-        <input
-          type="text"
-          placeholder="Search by Name, Roll No, or Parent Email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full border p-2 rounded"
-        />
-      </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parent Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status/ Action</th>
 
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {loading ? (
-              <tr><td colSpan="4"><Loader /></td></tr>
-            ) : filteredStudents.length > 0 ? (
-              filteredStudents.map((s) => (
-                // Inside the <tbody> map function
-                <tr key={s._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:underline">
-                    <Link to={`/principal/students/${s._id}`}>{s.firstName} {s.lastName}</Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.classId?.name || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.parentId?.email || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    {s.status === 'Active' ? (
-                      <button
-                        onClick={() => handleStatusChange(s._id, 'Left')}
-                        className="text-red-600 hover:underline font-medium"
-                      >
-                        Mark as Left
-                      </button>
-                    ) : (
-                      <div className="flex items-center space-x-2">
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">{s.status}</span>
-                        <button
-                          onClick={() => handleStatusChange(s._id, 'Active')}
-                          className="text-green-600 hover:underline text-xs font-medium"
-                        >
-                          Re-activate
-                        </button>
-                      </div>
-                    )}
-                  </td>
+      {loading ? (
+        <>
+          <HeadingWithButtonSkeleton btnCount={4} />
+          <SearchBarSkeleton />
+          <TableSkeleton rows={6} cols={5} />
+        </>
+      ) : (
+        <>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-800">Student Management</h1>
+            <div className="flex space-x-2">
+              <button onClick={showCsvHelp} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 font-medium flex items-center">
+                CSV Help
+              </button>
+              <input type="file" accept=".csv" onChange={handleFileUpload} className="hidden" id="csv-upload" />
+              <label htmlFor="csv-upload" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium cursor-pointer">
+                Bulk Import CSV
+              </label>
+              <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+                + Admit Student
+              </button>
+              <button
+                onClick={() => downloadFile(`/pdf/students`, 'All_Students_List.pdf')}
+                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium"
+              >
+                Download List PDF
+              </button>
+            </div>
+          </div>
+          {/* Search Bar */}
+          <div className="bg-white p-4 rounded-lg shadow mb-4">
+            <input
+              type="text"
+              placeholder="Search by Name, Roll No, or Parent Email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full border border-gray-300  p-2 rounded"
+            />
+          </div>
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parent Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status/ Action</th>
+
                 </tr>
-              ))
-            ) : (
-              <tr><td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">No students found.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredStudents.length > 0 ? (
+                  filteredStudents.map((s) => (
+                    // Inside the <tbody> map function
+                    <tr key={s._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:underline">
+                        <Link to={`/principal/students/${s._id}`}>{s.firstName} {s.lastName}</Link>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.classId?.name || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.parentId?.email || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {s.status === 'Active' ? (
+                          <button
+                            onClick={() => handleStatusChange(s._id, 'Left')}
+                            className="text-red-600 hover:underline font-medium"
+                          >
+                            Mark as Left
+                          </button>
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">{s.status}</span>
+                            <button
+                              onClick={() => handleStatusChange(s._id, 'Active')}
+                              className="text-green-600 hover:underline text-xs font-medium"
+                            >
+                              Re-activate
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">No students found.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div></>)}
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

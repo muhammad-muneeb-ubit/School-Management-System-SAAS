@@ -3,6 +3,7 @@ import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/sweetAlert';
 import Swal from 'sweetalert2';
+import  { HeadingWithButtonSkeleton, TableSkeleton, SearchBarSkeleton} from '../../components/skeletons';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -13,8 +14,10 @@ export default function UserManagement() {
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [parentForm, setParentForm] = useState({ email: '', password: '', firstName: '', lastName: '', phone: '' });
+  const [loading, setLoading] = useState(false);
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const teaRes = await api.get('/teachers');
       // We need a route to get parents. Let's assume we add /api/users/parents
@@ -22,8 +25,9 @@ export default function UserManagement() {
       const combined = [...teaRes.data, ...parRes.data];
       setUsers(combined);
     } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
-
+  
   useEffect(() => { fetchUsers(); }, []);
 
   const openResetModal = (user) => {
@@ -33,15 +37,18 @@ export default function UserManagement() {
   };
 
   const handleResetPassword = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       await api.put(`/users/${selectedUser._id}/reset-password`, { password: newPassword });
       showSuccess('Password reset successfully!');
       setShowResetModal(false);
     } catch (err) { showError('Failed to reset password'); }
+    finally { setLoading(false); }
   };
 
   const handleCreateParent = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       await api.post('/users/parent', parentForm);
@@ -49,12 +56,20 @@ export default function UserManagement() {
       setShowParentModal(false);
       fetchUsers();
     } catch (err) { showError(err.response?.data?.error || 'Failed to create parent'); }
+    finally { setLoading(false); }
   };
 
   return (
-    <DashboardLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
+   <>{(loading) ? (
+      <DashboardLayout>
+        <HeadingWithButtonSkeleton />
+          <SearchBarSkeleton />
+        <TableSkeleton rows={10}/>
+      </DashboardLayout>
+    ) : (
+      <DashboardLayout>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
 
         <button onClick={() => setShowParentModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
           + Register New Parent
@@ -66,12 +81,12 @@ export default function UserManagement() {
           placeholder="Search by name or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 border p-2 rounded"
+          className="flex-1 border border-gray-300 p-2 rounded"
         />
         <select
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
-          className="border p-2 rounded w-full md:w-48"
+          className="border border-gray-300 p-2 rounded w-full md:w-48"
         >
           <option value="">All Roles</option>
           <option value="Teacher">Teachers</option>
@@ -130,7 +145,7 @@ export default function UserManagement() {
                   type="text"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full border p-2 rounded"
+                  className="w-full border border-gray-300 p-2 rounded"
                   placeholder="Enter new password"
                   required
                 />
@@ -152,25 +167,25 @@ export default function UserManagement() {
             <form onSubmit={handleCreateParent} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Email</label>
-                <input type="email" value={parentForm.email} onChange={(e) => setParentForm({ ...parentForm, email: e.target.value })} className="w-full border p-2 rounded" required />
+                <input type="email" value={parentForm.email} onChange={(e) => setParentForm({ ...parentForm, email: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Password</label>
-                <input type="text" value={parentForm.password} onChange={(e) => setParentForm({ ...parentForm, password: e.target.value })} className="w-full border p-2 rounded" required />
+                <input type="text" value={parentForm.password} onChange={(e) => setParentForm({ ...parentForm, password: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">First Name</label>
-                  <input type="text" value={parentForm.firstName} onChange={(e) => setParentForm({ ...parentForm, firstName: e.target.value })} className="w-full border p-2 rounded" required />
+                  <input type="text" value={parentForm.firstName} onChange={(e) => setParentForm({ ...parentForm, firstName: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Last Name</label>
-                  <input type="text" value={parentForm.lastName} onChange={(e) => setParentForm({ ...parentForm, lastName: e.target.value })} className="w-full border p-2 rounded" />
+                  <input type="text" value={parentForm.lastName} onChange={(e) => setParentForm({ ...parentForm, lastName: e.target.value })} className="w-full border border-gray-300 p-2 rounded" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Phone</label>
-                <input type="text" value={parentForm.phone} onChange={(e) => setParentForm({ ...parentForm, phone: e.target.value })} className="w-full border p-2 rounded" />
+                <input type="text" value={parentForm.phone} onChange={(e) => setParentForm({ ...parentForm, phone: e.target.value })} className="w-full border border-gray-300 p-2 rounded" />
               </div>
               <div className="flex justify-end space-x-2 pt-2">
                 <button type="button" onClick={() => setShowParentModal(false)} className="px-4 py-2 text-gray-600 rounded hover:bg-gray-100">Cancel</button>
@@ -180,6 +195,6 @@ export default function UserManagement() {
           </div>
         </div>
       )}
-    </DashboardLayout>
+    </DashboardLayout>)}</>
   );
 }

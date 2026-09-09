@@ -32,6 +32,7 @@ import TimetableManagement from './pages/principal/TimetableManagement';
 import DataArchive from './pages/principal/DataArchive';
 import NotFound from './pages/NotFound';
 import StudentProfile from './pages/principal/StudentProfile';
+import Profile from './pages/Profile';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -46,7 +47,9 @@ export default function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />} allowedRoles={['Super Admin', 'Principal', 'Teacher', 'Parent']} />} />
 
+        
         {/* Super Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute element={<SuperAdminDashboard />} allowedRoles={['Super Admin']} />} />
         <Route path="/admin/logs" element={<ProtectedRoute element={<SuperAdminLogs />} allowedRoles={['Super Admin']} />} />

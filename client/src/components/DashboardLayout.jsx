@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }) {
       { name: 'Fees', icon: CreditCard, path: '/principal/fees' },
       { name: 'Communication', icon: MessageSquare, path: '/principal/communication' },
       { name: 'Timetable', icon: CalendarDays, path: '/principal/timetable' },
-      { name: 'Promotion', icon: TrendingUp, path: '/principal/promotion' }, 
+      { name: 'Promotion', icon: TrendingUp, path: '/principal/promotion' },
       { name: 'Data Archive', icon: Archive, path: '/principal/archive' },
       { name: 'Logs', icon: ClipboardList, path: '/principal/logs' },
     ];
@@ -71,15 +71,14 @@ export default function DashboardLayout({ children }) {
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
-        
+
         <nav className="flex-1 p-2 space-y-1">
           {menuItems.map((item) => (
             <Link
               key={item.name}
               to={item.path}
-              className={`flex items-center space-x-2 p-2 rounded hover:bg-blue-700 transition ${
-                location.pathname === item.path ? 'bg-blue-900' : ''
-              }`}
+              className={`flex items-center space-x-2 p-2 rounded hover:bg-blue-700 transition ${location.pathname === item.path ? 'bg-blue-900' : ''
+                }`}
             >
               <item.icon size={20} />
               {sidebarOpen && <span>{item.name}</span>}
@@ -101,13 +100,17 @@ export default function DashboardLayout({ children }) {
           <h1 className="text-xl font-semibold text-gray-800 capitalize">
             {user?.role} Portal
           </h1>
-          <div className="text-sm text-gray-600">
+          <Link to="/profile" className="text-sm text-blue-500 hover:text-blue-600 hover:underline hidden md:block">
             {user?.email}
-          </div>
+          </Link>
         </header>
         <main className="flex-1 p-6 overflow-y-auto">
           {children}
         </main>
+      {/* Footer */}
+      <footer className="bg-white shadow-sm p-4 text-center text-sm text-gray-500">
+        &copy; {new Date().getFullYear()} SMS. All rights reserved.
+      </footer>
       </div>
     </div>
   );

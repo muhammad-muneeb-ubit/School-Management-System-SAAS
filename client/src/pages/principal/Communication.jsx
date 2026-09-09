@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/sweetAlert';
+import { AnnouncementCardSkeleton } from '../../components/skeletons';
+
 
 export default function Communication() {
   const [announcements, setAnnouncements] = useState([]);
@@ -16,17 +18,25 @@ export default function Communication() {
   });
 
   const fetchAnnouncements = async () => {
+    setLoading(true);
     try {
       const res = await api.get('/communication/announcements');
       setAnnouncements(res.data);
     } catch (err) { console.error(err); }
+    finally {
+      setLoading(false);
+    }
   };
 
   const fetchClasses = async () => {
+    setLoading(true);
     try {
       const res = await api.get('/academic/classes');
       setClasses(res.data);
     } catch (err) { console.error(err); }
+    finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -63,7 +73,7 @@ export default function Communication() {
       </div>
 
       <div className="space-y-4">
-        {announcements.length > 0 ? (
+        {loading ? (<AnnouncementCardSkeleton count={4} />) : (announcements.length > 0 ? (
           announcements.map((a) => (
             <div key={a._id} className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
               <div className="flex justify-between items-start mb-2">
@@ -84,7 +94,7 @@ export default function Communication() {
           <div className="bg-white p-6 rounded-lg shadow text-center text-gray-500">
             No announcements yet. Click "New Announcement" to create one.
           </div>
-        )}
+        ))}
       </div>
 
       {showModal && (

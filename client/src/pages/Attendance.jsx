@@ -4,6 +4,7 @@ import api from '../services/api';
 import { showSuccess, showError } from '../utils/sweetAlert';
 import { downloadFile } from '../utils/downloadFile';
 
+
 export default function Attendance() {
   const [classes, setClasses] = useState([]);
   const [sections, setSections] = useState([]);
@@ -104,104 +105,105 @@ export default function Attendance() {
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Mark Attendance</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Mark Attendance</h1>
 
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Class</label>
-          <select value={selectedClass} onChange={handleClassChange} className="w-full border p-2 rounded">
-            <option value="">Select Class</option>
-            {/* {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)} */}
-            {classes.length > 0 ? (
-              classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)
-            ) : (
-              <option disabled>Create classes first in Academic Management</option>
-            )}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Section</label>
-          <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="w-full border p-2 rounded" disabled={!selectedClass}>
-            <option value="">Select Section</option>
-            {sections.length > 0 ? (
-              sections.map(s => <option key={s._id} value={s._id}>{s.name}</option>)
-            ) : (
-              <option disabled>Create sections first</option>
-            )}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border p-2 rounded" />
-        </div>
-        <div className="flex items-end">
-          <button onClick={fetchAttendanceData} className="w-full bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 font-medium">
-            Load Students
-          </button>
-        </div>
-      </div>
-
-      {/* Student List & Toggles */}
-      {students.length > 0 ? (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-4 border-b flex justify-between items-center">
-            <h2 className="text-lg font-semibold">Students ({students.length})</h2>
-            <div className="flex space-x-2">
-              <button onClick={handleSave} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
-                {loading ? 'Saving...' : 'Save Attendance'}
-              </button>
-              <button
-                onClick={() => downloadFile(`/pdf/attendance-sheet?classId=${selectedClass}&sectionId=${selectedSection}&date=${date}`, 'Attendance_Sheet.pdf')}
-                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium ml-2"
-              >
-                Download Sheet PDF
-              </button>
-            </div>
+        {/* Filters */}
+        <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Class</label>
+            <select value={selectedClass} onChange={handleClassChange} className="w-full border p-2 rounded">
+              <option value="">Select Class</option>
+              {/* {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)} */}
+              {classes.length > 0 ? (
+                classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)
+              ) : (
+                <option disabled>Create classes first in Academic Management</option>
+              )}
+            </select>
           </div>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {students.map((s) => (
-                <tr key={s._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.firstName} {s.lastName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => toggleAttendance(s._id, 'Present')}
-                        className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Present' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                      >
-                        Present
-                      </button>
-                      <button
-                        onClick={() => toggleAttendance(s._id, 'Absent')}
-                        className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Absent' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                      >
-                        Absent
-                      </button>
-                      <button
-                        onClick={() => toggleAttendance(s._id, 'Leave')}
-                        className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Leave' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                      >
-                        Leave
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div>
+            <label className="block text-sm font-medium mb-1">Section</label>
+            <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="w-full border p-2 rounded" disabled={!selectedClass}>
+              <option value="">Select Section</option>
+              {sections.length > 0 ? (
+                sections.map(s => <option key={s._id} value={s._id}>{s.name}</option>)
+              ) : (
+                <option disabled>Create sections first</option>
+              )}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border p-2 rounded" />
+          </div>
+          <div className="flex items-end">
+            <button onClick={fetchAttendanceData} className="w-full bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 font-medium">
+              Load Students
+            </button>
+          </div>
         </div>
-      ) : (
-        selectedSection && <div className="bg-white p-6 rounded-lg shadow text-center text-gray-500">No students found in this section.</div>
-      )}
+
+        {/* Student List & Toggles */}
+        {students.length > 0 ? (
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Students ({students.length})</h2>
+              <div className="flex space-x-2">
+                <button onClick={handleSave} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+                  {loading ? 'Saving...' : 'Save Attendance'}
+                </button>
+                <button
+                  onClick={() => downloadFile(`/pdf/attendance-sheet?classId=${selectedClass}&sectionId=${selectedSection}&date=${date}`, 'Attendance_Sheet.pdf')}
+                  className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium ml-2"
+                >
+                  Download Sheet PDF
+                </button>
+              </div>
+            </div>
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {students.map((s) => (
+                  <tr key={s._id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.firstName} {s.lastName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => toggleAttendance(s._id, 'Present')}
+                          className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Present' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+                        >
+                          Present
+                        </button>
+                        <button
+                          onClick={() => toggleAttendance(s._id, 'Absent')}
+                          className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Absent' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+                        >
+                          Absent
+                        </button>
+                        <button
+                          onClick={() => toggleAttendance(s._id, 'Leave')}
+                          className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Leave' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+                        >
+                          Leave
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          selectedSection && <div className="bg-white p-6 rounded-lg shadow text-center text-gray-500">No students found in this section.</div>
+        )}
+
     </DashboardLayout>
   );
 }

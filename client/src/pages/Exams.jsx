@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { downloadFile } from '../utils/downloadFile';
 import { showSuccess, showError, showConfirm } from '../utils/sweetAlert';
 import Tooltip from '../components/Tooltip';
-
+import { TableSkeleton,SearchBarSkeleton, HeadingWithButtonSkeleton } from '../components/skeletons';
 export default function Exams() {
     const [classes, setClasses] = useState([]);
     const [exams, setExams] = useState([]);
@@ -24,17 +24,25 @@ export default function Exams() {
     const [marksData, setMarksData] = useState({}); // { studentId: marks }
     const { user } = useSelector((state) => state.auth);
     const fetchClasses = async () => {
+        setLoading(true);
         try {
             const res = await api.get('/academic/classes');
             setClasses(res.data);
         } catch (err) { console.error(err); }
+        finally {
+            setLoading(false);
+        }
     };
 
     const fetchExams = async () => {
+        setLoading(true);
         try {
             const res = await api.get('/exams');
             setExams(res.data);
         } catch (err) { console.error(err); }
+        finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -128,30 +136,37 @@ export default function Exams() {
 
     return (
         <DashboardLayout>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Exams & Results</h1>
-                <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">+ Create Exam</button>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow mb-4 flex flex-col md:flex-row gap-4">
+            {loading ? (
+                <HeadingWithButtonSkeleton />
+            ) : (
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold text-gray-800">Exams & Results</h1>
+                    <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">+ Create Exam</button>
+                </div>
+            )}
+           {(loading) ? (
+                <SearchBarSkeleton />
+            ) : (
+                <div className="bg-white p-4 rounded-lg shadow mb-4 flex flex-col md:flex-row gap-4">
                 <input
                     type="text"
                     placeholder="Search exams by name..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 border p-2 rounded"
+                    className="flex-1 border border-gray-300  p-2 rounded"
                 />
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="border p-2 rounded w-full md:w-48"
+                    className="border border-gray-300  p-2 rounded w-full md:w-48"
                 >
                     <option value="">All Statuses</option>
                     <option value="Draft">Draft</option>
                     <option value="Published">Published</option>
                 </select>
-            </div>
+            </div>)}
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            {loading? <TableSkeleton/>:(<div className="bg-white border border-gray-300 rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -203,7 +218,7 @@ export default function Exams() {
                         })()}
                     </tbody>
                 </table>
-            </div>
+            </div>)}
 
             {/* Create Exam Modal */}
             {showModal && (

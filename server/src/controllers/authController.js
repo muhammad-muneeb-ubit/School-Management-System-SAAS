@@ -55,3 +55,43 @@ export const getMe = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Update user profile (name, phone)
+// @route   PUT /api/auth/profile
+export const updateProfile = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        user.profile.firstName = req.body.firstName || user.profile.firstName;
+        user.profile.lastName = req.body.lastName || user.profile.lastName;
+        user.profile.phone = req.body.phone || user.profile.phone;
+
+        await user.save();
+        res.json({ message: 'Profile updated successfully', user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update password
+// @route   PUT /api/auth/update-password
+export const updatePassword = async (req, res, next) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById(req.user._id).select('+password');
+        
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        // Verify old password
+        const isMatch = await user.matchPassword(currentPassword);
+        if (!isMatch) return res.status(401).json({ error: 'Current password is incorrect' });
+
+        user.password = newPassword;
+        await user.save();
+        
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        next(error);
+    }
+};

@@ -18,12 +18,12 @@ export const getFeeDefaulters = async (req, res, next) => {
             month: month,
             status: { $in: ['Pending', 'Partial'] }
         })
-        .populate({
-            path: 'studentId',
-            select: 'firstName lastName rollNumber classId',
-            populate: { path: 'classId', select: 'name' }
-        })
-        .select('totalAmount amountPaid status month studentId');
+            .populate({
+                path: 'studentId',
+                select: 'firstName lastName rollNumber classId',
+                populate: { path: 'classId', select: 'name' }
+            })
+            .select('totalAmount amountPaid status month studentId');
 
         res.json({ month, count: defaulters.length, defaulters });
     } catch (error) {
@@ -42,12 +42,12 @@ export const getClassAttendanceSummary = async (req, res, next) => {
         const summary = await Attendance.aggregate([
             { $match: { branchId: req.user.branchId, classId: mongoose.Types.ObjectId(classId) } },
             { $unwind: "$records" },
-            { 
+            {
                 $group: {
                     _id: "$records.studentId",
                     totalDays: { $sum: 1 },
-                    presentDays: { 
-                        $sum: { $cond: [{ $eq: ["$records.status", "Present"] }, 1, 0] } 
+                    presentDays: {
+                        $sum: { $cond: [{ $eq: ["$records.status", "Present"] }, 1, 0] }
                     }
                 }
             },
@@ -85,7 +85,8 @@ export const getStudentSummary = async (req, res, next) => {
         // 1. Get Student Profile & Class
         const student = await Student.findById(studentId)
             .populate('classId', 'name')
-            .populate('sectionId', 'name');
+            .populate('sectionId', 'name')
+            .populate('parentId', 'email profile');
 
         if (!student) return res.status(404).json({ error: 'Student not found' });
 
@@ -94,7 +95,7 @@ export const getStudentSummary = async (req, res, next) => {
             { $match: { branchId: req.user.branchId, 'records.studentId': new mongoose.Types.ObjectId(studentId) } },
             { $unwind: "$records" },
             { $match: { "records.studentId": new mongoose.Types.ObjectId(studentId) } },
-            { 
+            {
                 $group: {
                     _id: null,
                     totalDays: { $sum: 1 },
@@ -102,9 +103,9 @@ export const getStudentSummary = async (req, res, next) => {
                 }
             }
         ]);
-        
-        const attendancePercentage = attendanceData.length > 0 
-            ? Math.round((attendanceData[0].presentDays / attendanceData[0].totalDays) * 100) 
+
+        const attendancePercentage = attendanceData.length > 0
+            ? Math.round((attendanceData[0].presentDays / attendanceData[0].totalDays) * 100)
             : 0;
 
         // 3. Get Latest Result
@@ -144,7 +145,7 @@ export const getClassRanking = async (req, res, next) => {
         const rankedResults = results.map((result, index) => {
             let category = 'Standard';
             let template = 'standard_template'; // Frontend will use this to choose design
-            
+
             if (index < 3) {
                 category = 'Position Holder';
                 template = 'position_template';
@@ -185,7 +186,7 @@ export const getDashboardStats = async (req, res, next) => {
         // 2. Fee Stats for Current Month
         const feeStats = await Fee.aggregate([
             { $match: { branchId: new mongoose.Types.ObjectId(branchId), month: currentMonth } },
-            { 
+            {
                 $group: {
                     _id: null,
                     totalCollected: { $sum: "$amountPaid" },
@@ -211,7 +212,7 @@ export const getDashboardStats = async (req, res, next) => {
                 { $unwind: "$records" },
                 { $group: { _id: "$records.status", count: { $sum: 1 } } }
             ]);
-            
+
             presentToday = attendanceAgg.find(a => a._id === 'Present')?.count || 0;
             absentToday = attendanceAgg.find(a => a._id === 'Absent')?.count || 0;
         }

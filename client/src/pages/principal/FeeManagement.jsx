@@ -5,7 +5,8 @@ import { downloadFile } from '../../utils/downloadFile';
 import Loader from '../../components/Loader';
 import { showSuccess, showError } from '../../utils/sweetAlert';
 import Tooltip from '../../components/Tooltip';
-    
+import { DashboardHeaderSkeleton, FeeStructureSkeleton, InvoiceGeneratorSkeleton, InvoiceFiltersSkeleton, TableSkeleton } from '../../components/skeletons';
+
 export default function FeeManagement() {
     const [classes, setClasses] = useState([]);
     const [fees, setFees] = useState([]);
@@ -22,10 +23,12 @@ export default function FeeManagement() {
     const [paymentAmount, setPaymentAmount] = useState(0);
 
     const fetchClasses = async () => {
+        setLoading(true);
         try {
             const res = await api.get('/academic/classes');
             setClasses(res.data);
         } catch (err) { console.error(err); }
+        finally { setLoading(false); }
     };
 
     const fetchFees = async () => {
@@ -105,7 +108,21 @@ export default function FeeManagement() {
         }
     };
 
+
+            
     return (
+        <>
+      {loading ? (
+        <DashboardLayout>
+            <DashboardHeaderSkeleton />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <FeeStructureSkeleton />
+                <InvoiceGeneratorSkeleton />
+            </div>
+            <InvoiceFiltersSkeleton />
+            <TableSkeleton />
+        </DashboardLayout>
+      ): (
         <DashboardLayout>
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Fee Management</h1>
 
@@ -255,6 +272,6 @@ export default function FeeManagement() {
                     </div>
                 </div>
             )}
-        </DashboardLayout>
+        </DashboardLayout>)}</>
     );
 }

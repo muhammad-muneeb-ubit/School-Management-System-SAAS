@@ -4,9 +4,8 @@ import api from '../services/api';
 import { showSuccess, showError } from '../utils/sweetAlert';
 
 export default function Profile() {
-  const [profile, setProfile] = useState({ firstName: '', lastName: '', phone: '', email: '' });
+  const [profile, setProfile] = useState({ firstName: '', lastName: '', phone: '', email: '', role: '' });
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -15,7 +14,8 @@ export default function Profile() {
           firstName: res.data.profile?.firstName || '',
           lastName: res.data.profile?.lastName || '',
           phone: res.data.profile?.phone || '',
-          email: res.data.email
+          email: res.data.email,
+          role: res.data.role || ''
         });
       } catch (err) { console.error(err); }
     };
@@ -101,10 +101,10 @@ export default function Profile() {
                 <span className="font-medium text-gray-500">Account Status</span>
                 <span className="text-green-600">Active</span>
               </div>
-              <div className="flex justify-between bg-gray-50 p-3 rounded">
+              {/* <div className="flex justify-between bg-gray-50 p-3 rounded">
                 <span className="font-medium text-gray-500">Password Last Changed</span>
                 <span className="text-gray-800">N/A</span>
-              </div>
+              </div> */}
             </div>
             <p className="text-xs text-gray-400 mt-4 italic">
               If you need to change your email address or branch, please contact your Principal or System Administrator.

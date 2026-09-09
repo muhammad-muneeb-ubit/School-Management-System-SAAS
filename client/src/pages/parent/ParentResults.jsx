@@ -39,7 +39,7 @@ export default function ParentResults() {
 
       <div className="bg-white p-4 rounded-lg shadow mb-6 flex items-center space-x-4">
         <label className="font-medium text-gray-700">Viewing Child:</label>
-        <select value={selectedChildId} onChange={(e) => setSelectedChildId(e.target.value)} className="border p-2 rounded flex-1">
+        <select value={selectedChildId} onChange={(e) => setSelectedChildId(e.target.value)} className="border border-gray-300 p-2 rounded flex-1">
           {children.length > 0 ? children.map((c) => (
             <option key={c._id} value={c._id}>{c.firstName} {c.lastName} ({c.classId?.name || 'N/A'})</option>
           )) : <option disabled>No children found</option>}

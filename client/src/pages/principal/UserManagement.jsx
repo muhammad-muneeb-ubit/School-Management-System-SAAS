@@ -63,7 +63,7 @@ export default function UserManagement() {
    <>{(loading) ? (
       <DashboardLayout>
         <HeadingWithButtonSkeleton />
-          <SearchBarSkeleton />
+          <SearchBarSkeleton   btn = {true}/>
         <TableSkeleton rows={10}/>
       </DashboardLayout>
     ) : (

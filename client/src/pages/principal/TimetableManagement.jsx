@@ -154,7 +154,7 @@ export default function TimetableManagement() {
       ) : (user?.role === 'Parent' ? (
         <div className="bg-white p-4 rounded-lg shadow mb-6">
           <label className="block text-sm font-medium mb-1">Select Child</label>
-          <select value={selectedChild} onChange={(e) => handleChildChange(e.target.value)} className="w-full border p-2 rounded">
+          <select value={selectedChild} onChange={(e) => handleChildChange(e.target.value)} className="w-full border border-gray-300 p-2 rounded">
             {children.length > 0 ? children.map(c => <option key={c._id} value={c._id}>{c.firstName} {c.lastName} ({c.classId?.name || 'N/A'})</option>) : <option disabled>No children found</option>}
           </select>
         </div>
@@ -162,14 +162,14 @@ export default function TimetableManagement() {
         <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Class</label>
-            <select value={selectedClass} onChange={handleClassChange} className="w-full border p-2 rounded">
+            <select value={selectedClass} onChange={handleClassChange} className="w-full border border-gray-300 p-2 rounded">
               <option value="">Select Class</option>
               {classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option>}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Section</label>
-            <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="w-full border p-2 rounded" disabled={!selectedClass}>
+            <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="w-full border border-gray-300 p-2 rounded" disabled={!selectedClass}>
               {sections.length > 0 ? (
                 <>
                   <option value="">Select Section</option>
@@ -191,18 +191,18 @@ export default function TimetableManagement() {
           <div className="bg-white p-4 rounded-lg shadow h-fit">
             <h2 className="text-lg font-semibold mb-4">Add New Period</h2>
             <form onSubmit={handleAddPeriod} className="space-y-3">
-              <select value={period.day} onChange={(e) => setPeriod({ ...period, day: e.target.value })} className="w-full border p-2 rounded" required>
+              <select value={period.day} onChange={(e) => setPeriod({ ...period, day: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required>
                 {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(d => <option key={d} value={d}>{d}</option>)}
               </select>
               <div className="flex gap-2">
-                <input type="time" value={period.startTime} onChange={(e) => setPeriod({ ...period, startTime: e.target.value })} className="w-full border p-2 rounded" required />
-                <input type="time" value={period.endTime} onChange={(e) => setPeriod({ ...period, endTime: e.target.value })} className="w-full border p-2 rounded" required />
+                <input type="time" value={period.startTime} onChange={(e) => setPeriod({ ...period, startTime: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
+                <input type="time" value={period.endTime} onChange={(e) => setPeriod({ ...period, endTime: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
               </div>
-              <select value={period.subjectId} onChange={(e) => setPeriod({ ...period, subjectId: e.target.value })} className="w-full border p-2 rounded" required>
+              <select value={period.subjectId} onChange={(e) => setPeriod({ ...period, subjectId: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required>
                 <option value="">Select Subject</option>
                 {subjects.length > 0 ? subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>) : <option disabled>Create subjects first</option>}
               </select>
-              <select value={period.teacherId} onChange={(e) => setPeriod({ ...period, teacherId: e.target.value })} className="w-full border p-2 rounded" required>
+              <select value={period.teacherId} onChange={(e) => setPeriod({ ...period, teacherId: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required>
                 <option value="">Select Teacher</option>
                 {teachers.length > 0 ? teachers.map(t => <option key={t._id} value={t._id}>{t.profile?.firstName} {t.profile?.lastName}</option>) : <option disabled>No teachers found</option>}
               </select>

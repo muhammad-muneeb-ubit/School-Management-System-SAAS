@@ -145,7 +145,7 @@ export default function Exams() {
                 </div>
             )}
            {(loading) ? (
-                <SearchBarSkeleton />
+                <SearchBarSkeleton  btn = {true}/>
             ) : (
                 <div className="bg-white p-4 rounded-lg shadow mb-4 flex flex-col md:flex-row gap-4">
                 <input
@@ -229,11 +229,11 @@ export default function Exams() {
                             <div className="space-y-4 mb-4">
                                 <div>
                                     <label className="block text-sm font-medium mb-1">Exam Name (e.g., Mid-Term)</label>
-                                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border p-2 rounded" required />
+                                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium mb-1">Class</label>
-                                    <select name="classId" value={formData.classId} onChange={handleChange} className="w-full border p-2 rounded" required>
+                                    <select name="classId" value={formData.classId} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required>
                                         <option value="">Select Class</option>
                                         {classes.length > 0 ? (
                                             classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)
@@ -245,11 +245,11 @@ export default function Exams() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium mb-1">Total Marks</label>
-                                        <input type="number" name="totalMarksPerSubject" value={formData.totalMarksPerSubject} onChange={handleChange} className="w-full border p-2 rounded" required />
+                                        <input type="number" name="totalMarksPerSubject" value={formData.totalMarksPerSubject} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium mb-1">Passing %</label>
-                                        <input type="number" name="passingPercentage" value={formData.passingPercentage} onChange={handleChange} className="w-full border p-2 rounded" required />
+                                        <input type="number" name="passingPercentage" value={formData.passingPercentage} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required />
                                     </div>
                                 </div>
                             </div>

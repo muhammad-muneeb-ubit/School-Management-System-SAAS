@@ -51,7 +51,7 @@ export default function ParentFees() {
         <select
           value={selectedChildId}
           onChange={(e) => setSelectedChildId(e.target.value)}
-          className="border p-2 rounded flex-1"
+          className="border border-gray-300 p-2 rounded flex-1"
         >
           { children.length > 0 ? children.map((c) => (
             <option key={c._id} value={c._id}>

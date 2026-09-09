@@ -171,7 +171,7 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
               placeholder="Search by Name, Roll No, or Parent Email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-gray-300  p-2 rounded"
+              className="w-full border border-gray-300   p-2 rounded"
             />
           </div>
           <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -236,37 +236,37 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
                 <div>
                   <label className="block text-sm font-medium mb-1">First Name</label>
                   <Tooltip text="Enter first name (e.g., Muhammad)">
-                    <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border p-2 rounded " required />
+                    <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded " required />
                   </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Last Name</label>
                   <Tooltip text="Enter last name (e.g., Ahmed)">
-                    <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full border p-2 rounded " />
+                    <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded " />
                   </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Roll No</label>
                   <Tooltip text="Enter a unique roll number (e.g., 101)">
-                    <input type="text" name="rollNumber" value={formData.rollNumber} onChange={handleChange} className="w-full border p-2 rounded " required />
+                    <input type="text" name="rollNumber" value={formData.rollNumber} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded " required />
                   </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full border p-2 rounded ">
+                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded ">
                     <option>Male</option><option>Female</option><option>Other</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Class</label>
-                  <select name="classId" value={formData.classId} onChange={handleClassChange} className="w-full border p-2 rounded " required>
+                  <select name="classId" value={formData.classId} onChange={handleClassChange} className="w-full border border-gray-300 p-2 rounded " required>
                     <option value="">Select Class</option>
                     {classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option>}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Section</label>
-                  <select name="sectionId" value={formData.sectionId} onChange={handleChange} className="w-full border p-2 rounded " required>
+                  <select name="sectionId" value={formData.sectionId} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded " required>
                     <option value="">Select Section</option>
                     {sections.length > 0 ? sections.map(s => <option key={s._id} value={s._id}>{s.name}</option>) : <option disabled>Create sections first in Academic Management</option>}
                   </select>
@@ -274,7 +274,7 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
                 <div className="col-span-2">
                   <label className="block text-sm font-medium mb-1">Parent Email</label>
                   <Tooltip text="Enter parent's email (e.g.,ahmed@gmail.com)">
-                    <input type="email" name="parentEmail" value={formData.parentEmail} onChange={handleChange} className="w-full border p-2 rounded " required />
+                    <input type="email" name="parentEmail" value={formData.parentEmail} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded " required />
                   </Tooltip>
                 </div>
               </div>

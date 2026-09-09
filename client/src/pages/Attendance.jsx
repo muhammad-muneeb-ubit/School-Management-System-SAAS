@@ -3,7 +3,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import api from '../services/api';
 import { showSuccess, showError } from '../utils/sweetAlert';
 import { downloadFile } from '../utils/downloadFile';
-
+import { DashboardHeaderSkeleton, TableSkeleton, AttendanceFilterSkeleton } from '../components/skeletons';
 
 export default function Attendance() {
   const [classes, setClasses] = useState([]);
@@ -16,14 +16,17 @@ export default function Attendance() {
 
   const [attendanceRecords, setAttendanceRecords] = useState({});
   const [loading, setLoading] = useState(false);
+  const [resultLoading, setResultLoading] = useState(false);
 
   // Fetch Classes on mount
   useEffect(() => {
     const fetchClasses = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/academic/classes');
         setClasses(res.data);
       } catch (err) { console.error(err); }
+      finally { setLoading(false); }
     };
     fetchClasses();
   }, []);
@@ -45,6 +48,7 @@ export default function Attendance() {
 
   // Fetch Students & Existing Attendance when Section/Date changes
   const fetchAttendanceData = async () => {
+    setResultLoading(true);
     if (!selectedClass || !selectedSection || !date) return;
     try {
       // 1. Fetch Students (Put sectionId back in to keep it strict)
@@ -69,6 +73,8 @@ export default function Attendance() {
       setAttendanceRecords(initRecords);
     } catch (err) {
       console.error(err);
+    } finally {
+      setResultLoading(false);
     }
   };
 
@@ -105,46 +111,56 @@ export default function Attendance() {
 
   return (
     <DashboardLayout>
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Mark Attendance</h1>
+      {loading ? (
+        <>
+          <DashboardHeaderSkeleton />
+          <AttendanceFilterSkeleton />
+        </>
+      ) : (
+        <>
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Mark Attendance</h1>
+          {/* Filters */}
+          <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Class</label>
+              <select value={selectedClass} onChange={handleClassChange} className="w-full border border-gray-300 p-2 rounded">
+                <option value="">Select Class</option>
+                {/* {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)} */}
+                {classes.length > 0 ? (
+                  classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)
+                ) : (
+                  <option disabled>Create classes first in Academic Management</option>
+                )}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Section</label>
+              <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="w-full border border-gray-300 p-2 rounded" disabled={!selectedClass}>
+                <option value="">Select Section</option>
+                {sections.length > 0 ? (
+                  sections.map(s => <option key={s._id} value={s._id}>{s.name}</option>)
+                ) : (
+                  <option disabled>Create sections first</option>
+                )}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Date</label>
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-gray-300 p-2 rounded" />
+            </div>
+            <div className="flex items-end">
+              <button onClick={fetchAttendanceData} className="w-full bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 font-medium">
+                Load Students
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
-        {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Class</label>
-            <select value={selectedClass} onChange={handleClassChange} className="w-full border p-2 rounded">
-              <option value="">Select Class</option>
-              {/* {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)} */}
-              {classes.length > 0 ? (
-                classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)
-              ) : (
-                <option disabled>Create classes first in Academic Management</option>
-              )}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Section</label>
-            <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="w-full border p-2 rounded" disabled={!selectedClass}>
-              <option value="">Select Section</option>
-              {sections.length > 0 ? (
-                sections.map(s => <option key={s._id} value={s._id}>{s.name}</option>)
-              ) : (
-                <option disabled>Create sections first</option>
-              )}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Date</label>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border p-2 rounded" />
-          </div>
-          <div className="flex items-end">
-            <button onClick={fetchAttendanceData} className="w-full bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 font-medium">
-              Load Students
-            </button>
-          </div>
-        </div>
 
-        {/* Student List & Toggles */}
-        {students.length > 0 ? (
+      {/* Student List & Toggles */}
+      {resultLoading ? <TableSkeleton /> : (
+        students.length > 0 ? (
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <div className="p-4 border-b flex justify-between items-center">
               <h2 className="text-lg font-semibold">Students ({students.length})</h2>
@@ -202,7 +218,8 @@ export default function Attendance() {
           </div>
         ) : (
           selectedSection && <div className="bg-white p-6 rounded-lg shadow text-center text-gray-500">No students found in this section.</div>
-        )}
+        )
+      )}
 
     </DashboardLayout>
   );

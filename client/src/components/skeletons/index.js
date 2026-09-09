@@ -14,3 +14,8 @@ export { default as LayoutSkeleton } from './LayoutSkeleton'; // Move LayoutSkel
 export { default as InvoiceFiltersSkeleton } from './InvoiceFiltersSkeleton'; // Move InvoiceFiltersSkeleton here if you want
 export { default as InvoiceGeneratorSkeleton } from './InvoiceGeneratorSkeleton'; // Move InvoiceGeneratorSkeleton here if you want
 export { default as FeeStructureSkeleton } from './FeeStructureSkeleton'; // Move FeeStructureSkeleton here if you want
+export { default as AcademicManagementSkeleton } from './AcademicManagementSkeleton'; // Move AcademicManagementSkeleton here if you want
+export { default as AttendanceFilterSkeleton} from './AttendanceFilterSkeleton'; // Move AttendanceFilterSkeleton here if you want
+export { default as PromotionFormSkeleton} from './PromotionFormSkeleton'; // Move PromotionFormSkeleton here if you want
+export { default as CollapseSidebarSkeleton} from './CollapseSidebarSkeleton'; // Move CollapseSidebarSkeleton here if you want
+export { default as CollapseNavbarAdmin} from './CollapseNavbarAdmin'; // Move CollapseNavbarAdmin here if you want

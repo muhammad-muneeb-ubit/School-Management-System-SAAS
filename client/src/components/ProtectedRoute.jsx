@@ -4,8 +4,8 @@ import { LayoutSkeleton } from '../components/skeletons';
 
 export default function ProtectedRoute({ element, allowedRoles }) {
   const { user, loading } = useSelector((state) => state.auth);
-
-  if (loading) return<LayoutSkeleton />
+  console.log('ProtectedRoute - user:', user?.role);
+  if (loading) return<LayoutSkeleton  theme={'blue'} />
   if (!user) return <Navigate to="/" replace />;
   
   if (allowedRoles && !allowedRoles.includes(user.role)) {

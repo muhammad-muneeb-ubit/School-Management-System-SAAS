@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/sweetAlert';
-import { AnnouncementCardSkeleton } from '../../components/skeletons';
-
+import { AnnouncementCardSkeleton, HeadingWithButtonSkeleton } from '../../components/skeletons';
+import Tooltip from '../../components/Tooltip';
 
 export default function Communication() {
   const [announcements, setAnnouncements] = useState([]);
@@ -65,12 +65,12 @@ export default function Communication() {
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-6">
+      {loading? <HeadingWithButtonSkeleton/>:(<div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Communication</h1>
         <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
           + New Announcement
         </button>
-      </div>
+      </div>)}
 
       <div className="space-y-4">
         {loading ? (<AnnouncementCardSkeleton count={4} />) : (announcements.length > 0 ? (
@@ -106,19 +106,19 @@ export default function Communication() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>
                   <Tooltip text="Enter a title for your announcement.">
-                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border p-2 rounded" required />
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required />
                   </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Message</label>
                   <Tooltip text="Enter the message for your announcement.">
-                    <textarea name="message" value={formData.message} onChange={handleChange} rows="4" className="w-full border p-2 rounded" required></textarea>
+                    <textarea name="message" value={formData.message} onChange={handleChange} rows="4" className="w-full border border-gray-300 p-2 rounded" required></textarea>
                   </Tooltip>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Audience</label>
-                    <select name="audience" value={formData.audience} onChange={handleChange} className="w-full border p-2 rounded">
+                    <select name="audience" value={formData.audience} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded">
                       <option value="School">Entire School</option>
                       <option value="Class">Specific Class</option>
                     </select>
@@ -126,7 +126,7 @@ export default function Communication() {
                   {formData.audience === 'Class' && (
                     <div>
                       <label className="block text-sm font-medium mb-1">Select Class</label>
-                      <select name="classId" value={formData.classId} onChange={handleChange} className="w-full border p-2 rounded" required>
+                      <select name="classId" value={formData.classId} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required>
                         <option value="">Select Class</option>
                         { classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option> }
                       </select>

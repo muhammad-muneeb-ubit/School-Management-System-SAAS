@@ -127,7 +127,7 @@ const handleResetPassword = async (id) => {
                   type="email" 
                   value={formData.email} 
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
-                  className="w-full border p-2 rounded" 
+                  className="w-full border border-gray-300 p-2 rounded" 
                   required 
                 />
               </div>
@@ -137,7 +137,7 @@ const handleResetPassword = async (id) => {
                   type="text" 
                   value={formData.password} 
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
-                  className="w-full border p-2 rounded" 
+                  className="w-full border border-gray-300 p-2 rounded" 
                   required 
                 />
               </div>
@@ -146,7 +146,7 @@ const handleResetPassword = async (id) => {
                 <select 
                   value={formData.branchId} 
                   onChange={(e) => setFormData({ ...formData, branchId: e.target.value })} 
-                  className="w-full border p-2 rounded" 
+                  className="w-full border border-gray-300 p-2 rounded" 
                   required
                 >
                   <option value="">Select Branch</option>

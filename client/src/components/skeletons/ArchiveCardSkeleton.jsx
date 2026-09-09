@@ -1,6 +1,7 @@
 export default function ArchiveCardSkeleton({ columnCount = 1, rowCount = 3 }) {
   return (
     <>
+     
       {[...Array(columnCount)].map((_, i) => (
         <div key={i} className="bg-white p-6 rounded-lg shadow animate-pulse">
           <div className="h-6 w-40 bg-gray-200 rounded mb-6"></div>
@@ -15,10 +16,10 @@ export default function ArchiveCardSkeleton({ columnCount = 1, rowCount = 3 }) {
               </div>
             ))}
           </div>
-          
+
         </div>
       ))}
-            {/* Import Archived Data */}
+      {/* Import Archived Data */}
       <div className="bg-white p-6 rounded-lg shadow">
 
         {/* Heading */}

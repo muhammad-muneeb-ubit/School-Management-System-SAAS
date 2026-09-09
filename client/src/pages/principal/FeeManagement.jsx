@@ -131,12 +131,12 @@ export default function FeeManagement() {
                 <div className="bg-white p-4 rounded-lg shadow">
                     <h2 className="text-lg font-semibold mb-4">Set Class Fee Structure</h2>
                     <form onSubmit={handleSetStructure} className="space-y-3">
-                        <select value={structureForm.classId} onChange={(e) => setStructureForm({ ...structureForm, classId: e.target.value })} className="w-full border p-2 rounded" required>
+                        <select value={structureForm.classId} onChange={(e) => setStructureForm({ ...structureForm, classId: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required>
                             <option value="">Select Class</option>
                             { classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option> }
                         </select>
                         <Tooltip text="Select the class for which you want to set the fee structure.">
-                            <input type="number" placeholder="Amount (e.g., 5000)" value={structureForm.amount} onChange={(e) => setStructureForm({ ...structureForm, amount: e.target.value })} className="w-full border p-2 rounded" required />
+                            <input type="number" placeholder="Amount (e.g., 5000)" value={structureForm.amount} onChange={(e) => setStructureForm({ ...structureForm, amount: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
                         </Tooltip>
                         <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Structure</button>
                     </form>
@@ -146,12 +146,12 @@ export default function FeeManagement() {
                 <div className="bg-white p-4 rounded-lg shadow">
                     <h2 className="text-lg font-semibold mb-4">Generate Monthly Invoices</h2>
                     <form onSubmit={handleGenerate} className="space-y-3">
-                        <select value={generateForm.classId} onChange={(e) => setGenerateForm({ ...generateForm, classId: e.target.value })} className="w-full border p-2 rounded" required>
+                        <select value={generateForm.classId} onChange={(e) => setGenerateForm({ ...generateForm, classId: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required>
                             <option value="">Select Class</option>
                             { classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option> }
                         </select>
                         <Tooltip text="Select the month for which you want to generate invoices.">
-                            <input type="month" value={generateForm.month} onChange={(e) => setGenerateForm({ ...generateForm, month: e.target.value })} className="w-full border p-2 rounded" required />
+                            <input type="month" value={generateForm.month} onChange={(e) => setGenerateForm({ ...generateForm, month: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
                         </Tooltip>
                         <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Generate Invoices</button>
                     </form>
@@ -162,18 +162,18 @@ export default function FeeManagement() {
             <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label className="block text-sm font-medium mb-1">Filter by Class</label>
-                    <select value={filterClass} onChange={(e) => setFilterClass(e.target.value)} className="w-full border p-2 rounded">
+                    <select value={filterClass} onChange={(e) => setFilterClass(e.target.value)} className="w-full border border-gray-300 p-2 rounded">
                         <option value="">All Classes</option>
                         { classes.length > 0 ? classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>) : <option disabled>No classes found</option> }
                     </select>
                 </div>
                 <div>
                     <label className="block text-sm font-medium mb-1">Filter by Month</label>
-                    <input type="month" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)} className="w-full border p-2 rounded" />
+                    <input type="month" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)} className="w-full border border-gray-300 p-2 rounded" />
                 </div>
                 <div>
                     <label className="block text-sm font-medium mb-1">Filter by Status</label>
-                    <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-full border p-2 rounded">
+                    <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-full border border-gray-300 p-2 rounded">
                         <option value="">All Statuses</option>
                         <option value="Paid">Paid</option>
                         <option value="Partial">Partial</option>
@@ -258,7 +258,7 @@ export default function FeeManagement() {
                                     type="number"
                                     value={paymentAmount}
                                     onChange={(e) => setPaymentAmount(e.target.value)}
-                                    className="w-full border p-2 rounded"
+                                    className="w-full border border-gray-300 p-2 rounded"
                                     required
                                 />
                             </div>

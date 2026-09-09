@@ -94,7 +94,7 @@ export default function TeacherHomework() {
                       const a = assignments[e.target.value];
                       setFormData({ ...formData, classId: a.classId, sectionId: a.sectionId, subjectId: a.subjectId });
                     }} 
-                    className="w-full border p-2 rounded"
+                    className="w-full border border-gray-300 p-2 rounded"
                     required
                   >
                     <option value="">Select Class/Subject</option>
@@ -108,18 +108,18 @@ export default function TeacherHomework() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>
                   <Tooltip text="Enter the title of the new homework.">
-                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border p-2 rounded" required />
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required />
                   </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Description</label>
                   <Tooltip text="Provide a brief description or instructions for the homework.">
-                    <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full border p-2 rounded" required></textarea>
+                    <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full border border-gray-300 p-2 rounded" required></textarea>
                   </Tooltip>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Due Date</label>
-                  <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} className="w-full border p-2 rounded" required />
+                  <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded" required />
                 </div>
               </div>
               <div className="flex justify-end space-x-2">

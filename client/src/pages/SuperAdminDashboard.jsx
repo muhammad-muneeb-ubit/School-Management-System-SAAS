@@ -65,7 +65,7 @@ export default function SuperAdminDashboard() {
   };
 
   return (
-    <SuperAdminLayout>
+    <SuperAdminLayout loading={loading}>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">System Setup & Administration</h1>
 
       {/* Summary Cards */}
@@ -95,7 +95,7 @@ export default function SuperAdminDashboard() {
                 type="number" 
                 value={maxBranches} 
                 onChange={(e) => setMaxBranches(e.target.value)} 
-                className="w-full border p-2 rounded" 
+                className="w-full border border-gray-300 p-2 rounded" 
                 required 
               />
               <p className="text-xs text-gray-500 mt-1">Set the maximum number of campuses this school can have.</p>
@@ -121,7 +121,7 @@ export default function SuperAdminDashboard() {
                   type="text" 
                   value={branchForm.name} 
                   onChange={(e) => setBranchForm({ ...branchForm, name: e.target.value })} 
-                  className="w-full border p-2 rounded" 
+                  className="w-full border border-gray-300 p-2 rounded" 
                 required 
               />
             </Tooltip>
@@ -133,7 +133,7 @@ export default function SuperAdminDashboard() {
                 type="text" 
                 value={branchForm.address} 
                 onChange={(e) => setBranchForm({ ...branchForm, address: e.target.value })} 
-                className="w-full border p-2 rounded" 
+                className="w-full border border-gray-300 p-2 rounded" 
               />
             </Tooltip>
             </div>

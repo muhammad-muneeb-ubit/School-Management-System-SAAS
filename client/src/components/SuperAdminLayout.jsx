@@ -3,10 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../features/auth/authSlice';
 import { LogOut, Menu, X, Settings, Users, FileText } from 'lucide-react';
+import { LayoutSkeleton } from './skeletons';
 
-export default function SuperAdminLayout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const location = useLocation();
+export default function SuperAdminLayout({ children, loading }) {
+   const [sidebarOpen, setSidebarOpen] = useState(() => {
+    const saved = localStorage.getItem('sidebarOpen');
+    return saved === null ? true : saved === 'true';
+  });const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -15,13 +18,23 @@ export default function SuperAdminLayout({ children }) {
     { name: 'Principals', icon: Users, path: '/admin/principals' },
     { name: 'Audit Logs', icon: FileText, path: '/admin/logs' },
   ];
-
+  const toggleSidebar = () => {
+    setSidebarOpen(prev => {
+      const newState = !prev;
+      localStorage.setItem('sidebarOpen', String(newState));
+      return newState;
+    });
+  };     
+  
+  if (loading) {
+    return <LayoutSkeleton theme="admin" />; // <--- Dark Gray Skeleton!
+  }   
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-900 text-white transition-all duration-300 flex flex-col`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-15'} bg-gray-900 text-white transition-all duration-300 flex flex-col`}>
         <div className="p-4 flex items-center justify-between border-b border-gray-700">
           {sidebarOpen && <div><h1 className="text-xl font-bold">SMS System</h1><p className="text-xs text-gray-400">Super Admin</p></div>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 rounded hover:bg-gray-800">
+          <button onClick={toggleSidebar} className="p-1 rounded hover:bg-gray-800">
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>

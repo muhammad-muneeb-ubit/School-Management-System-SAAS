@@ -22,10 +22,12 @@ export default function DataArchive() {
 
   useEffect(() => { fetchSessions(); }, []);
 
-  if (!sessions.length >0) {
+  if (!sessions.length > 0) {
+  // if (true) {
     return (
       <DashboardLayout>
         <DashboardHeaderSkeleton />
+        <div className="h-22 bg-white bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 "></div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ArchiveCardSkeleton columnCount={1} rowCount={4} />
         </div>

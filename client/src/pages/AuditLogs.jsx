@@ -26,7 +26,7 @@ export default function AuditLogs() {
     <> {loading ? (<>
       <DashboardHeaderSkeleton />
       <SearchBarSkeleton btn = {true}/>
-      <div className="h-4 w-72 bg-white p-3 border border-gray-300 rounded mb-4 "></div>
+      <div className="h-4 w-72 bg-white p-3 rounded mb-4 "></div>
       <TableSkeleton columnCount={5} rowCount={8} />
     </>)
       : (<div>

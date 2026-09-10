@@ -3,6 +3,7 @@ import SuperAdminLayout from '../../components/SuperAdminLayout';
 import api from '../../services/api';
 import Swal from 'sweetalert2';
 import { showSuccess, showError } from '../../utils/sweetAlert';
+import { HeadingWithButtonSkeleton, TableSkeleton } from '../../components/skeletons';
 
 export default function PrincipalManagement() {
   const [principals, setPrincipals] = useState([]);
@@ -12,6 +13,7 @@ export default function PrincipalManagement() {
   const [formData, setFormData] = useState({ email: '', password: 'Principal123!', branchId: '' });
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const prinRes = await api.get('/admin/principals');
       setPrincipals(prinRes.data);
@@ -20,6 +22,8 @@ export default function PrincipalManagement() {
       setBranches(branchRes.data);
     } catch (err) { 
       console.error(err); 
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +73,12 @@ const handleResetPassword = async (id) => {
 };
 
   return (
-    <SuperAdminLayout>
+  <>{loading ? (
+      <SuperAdminLayout>
+        <HeadingWithButtonSkeleton/>
+        <TableSkeleton rows={3} cols={3} />
+      </SuperAdminLayout> )
+     : <SuperAdminLayout loading={loading}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Principal Accounts</h1>
         <button 
@@ -175,6 +184,6 @@ const handleResetPassword = async (id) => {
           </div>
         </div>
       )}
-    </SuperAdminLayout>
-  );
+    </SuperAdminLayout>}
+  </>);
 }

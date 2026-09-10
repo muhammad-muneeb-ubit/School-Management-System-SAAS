@@ -6,7 +6,7 @@ const HeadingWithButtonSkeleton = ({ btnCount = 1 }) => {
       <div className="flex space-x-2">
         {/* Register Button */}
         {Array.from({ length: btnCount }, (_, i) => (
-          <div key={i} className="h-11 w-52 bg-gray-200 rounded"></div>
+          <div key={i} className={`h-11 ${btnCount > 1 ? 'w-36' : 'w-52'} bg-gray-200 rounded`}></div>
         ))}
       </div>
     </div>

@@ -1,9 +1,11 @@
-export default function TableSkeleton({ rows = 5, cols = 4 }) {
+export default function TableSkeleton({ rows = 5, cols = 4, text = false }) {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="bg-gray-50 p-4 border-b border-gray-200">
-        <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
-      </div>
+      {text && (
+        <div className="bg-gray-50 p-4 border-b border-gray-200">
+          <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+      )}
       <table className="min-w-full divide-y divide-gray-300">
         <thead className="bg-gray-50">
           <tr>

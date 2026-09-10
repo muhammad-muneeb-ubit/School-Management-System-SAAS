@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
+import { DashboardHeaderSkeleton, ChildSelectorSkeleton, TableSkeleton } from '../../components/skeletons';
 
 export default function ParentAttendance() {
   const [children, setChildren] = useState([]);
@@ -10,17 +11,20 @@ export default function ParentAttendance() {
 
   useEffect(() => {
     const fetchChildren = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/students/my-children');
         setChildren(res.data);
         if (res.data.length > 0) setSelectedChildId(res.data[0]._id);
       } catch (err) { console.error(err); }
+      finally { setLoading(false); }
     };
     fetchChildren();
   }, []);
 
   useEffect(() => {
     if (!selectedChildId) return;
+    setLoading(true);
     const fetchHistory = async () => {
       setLoading(true);
       try {
@@ -33,8 +37,15 @@ export default function ParentAttendance() {
   }, [selectedChildId]);
 
   return (
-    <DashboardLayout>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Attendance History</h1>
+   <>{(loading) ? (
+      <DashboardLayout>
+        <DashboardHeaderSkeleton />
+        <ChildSelectorSkeleton />
+        <TableSkeleton cols={2} rows={5} />
+      </DashboardLayout>
+    ) : (
+      <DashboardLayout>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Attendance History</h1>
 
       <div className="bg-white p-4 rounded-lg shadow mb-6 flex items-center space-x-4">
         <label className="font-medium text-gray-700">Viewing Child:</label>
@@ -81,6 +92,6 @@ export default function ParentAttendance() {
           </tbody>
         </table>
       </div>
-    </DashboardLayout>
+    </DashboardLayout>)}</>
   );
 }

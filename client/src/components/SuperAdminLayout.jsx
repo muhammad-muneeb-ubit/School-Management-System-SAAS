@@ -27,11 +27,11 @@ export default function SuperAdminLayout({ children, loading }) {
   };     
   
   if (loading) {
-    return <LayoutSkeleton theme="admin" />; // <--- Dark Gray Skeleton!
+    return <LayoutSkeleton theme="admin" user={'admin'} />; // <--- Dark Gray Skeleton!
   }   
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      <div className={`${sidebarOpen ? 'w-64' : 'w-15'} bg-gray-900 text-white transition-all duration-300 flex flex-col`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-15'} bg-gray-900 text-white transition-all duration-300 flex flex-col `}>
         <div className="p-4 flex items-center justify-between border-b border-gray-700">
           {sidebarOpen && <div><h1 className="text-xl font-bold">SMS System</h1><p className="text-xs text-gray-400">Super Admin</p></div>}
           <button onClick={toggleSidebar} className="p-1 rounded hover:bg-gray-800">

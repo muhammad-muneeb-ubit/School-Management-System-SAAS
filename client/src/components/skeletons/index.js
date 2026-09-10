@@ -19,3 +19,11 @@ export { default as AttendanceFilterSkeleton} from './AttendanceFilterSkeleton';
 export { default as PromotionFormSkeleton} from './PromotionFormSkeleton'; // Move PromotionFormSkeleton here if you want
 export { default as CollapseSidebarSkeleton} from './CollapseSidebarSkeleton'; // Move CollapseSidebarSkeleton here if you want
 export { default as CollapseNavbarAdmin} from './CollapseNavbarAdmin'; // Move CollapseNavbarAdmin here if you want
+export { default as CardSkeleton} from './CardSkeleton'; // Move CardSkeleton here if you want
+export { default as SystemSetupSkeleton } from './SystemSetupSkeleton'; // Move SystemSetupSkeleton here if you want
+export { default as ParentDashboardSkeleton } from './ParentDashboardSkeleton'; // Move ParentDashboardSkeleton here if you want
+export { default as ChildSelectorSkeleton } from './ChildSelectorSkeleton'; // Move ChildSelectorSkeleton here if you want
+export { default as ClassCardSkeleton } from './ClassCardSkeleton'; // Move ClassCardSkeleton here if you want
+export { default as AssignedClassesSkeleton } from './AssignedClassesSkeleton'; // Move AssignedClassesSkeleton here if you want
+export { default as ClassAssignmentsSkeleton } from './ClassAssignmentsSkeleton'; // Move ClassAssignmentsSkeleton here if you want
+export { default as HomeworkCardSkeleton } from './HomeworkCardSkeleton'; // Move HomeworkCardSkeleton here if you want

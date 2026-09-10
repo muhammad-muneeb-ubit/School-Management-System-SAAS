@@ -1,29 +1,40 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 import api from '../../services/api';
+import {DashboardHeaderSkeleton, AnnouncementCardSkeleton} from '../../components/skeletons';
 
 export default function ParentAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(false);  
 
   useEffect(() => {
+    setLoading(true);
     const fetchAnnouncements = async () => {
       try {
         const res = await api.get('/communication/announcements');
         setAnnouncements(res.data);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchAnnouncements();
   }, []);
 
   return (
-    <DashboardLayout>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">School Announcements</h1>
-      
-      <div className="space-y-4">
-        {announcements.length > 0 ? (
-          announcements.map((a) => (
+   <>{loading ? (
+      <DashboardLayout>
+        <DashboardHeaderSkeleton />
+        <AnnouncementCardSkeleton count={2} />
+      </DashboardLayout>
+    ) : (
+      <DashboardLayout>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">School Announcements</h1>
+        
+        <div className="space-y-4">
+          {announcements.length > 0 ? (
+            announcements.map((a) => (
             <div key={a._id} className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-lg font-semibold text-gray-800">{a.title}</h3>
@@ -45,6 +56,6 @@ export default function ParentAnnouncements() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </DashboardLayout>)}</>
   );
 }

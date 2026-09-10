@@ -1,4 +1,4 @@
-const FeeStructureSkeleton = () => {
+const FeeStructureSkeleton = ({boxCount=1}) => {
   return (
     <div className="bg-white p-5 rounded-lg shadow animate-pulse">
       {/* Heading */}

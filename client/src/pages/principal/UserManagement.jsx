@@ -71,7 +71,7 @@ export default function UserManagement() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
 
-        <button onClick={() => setShowParentModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+        <button onClick={() => setShowParentModal(true)} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-400 font-medium">
           + Register New Parent
         </button>
       </div>
@@ -152,7 +152,7 @@ export default function UserManagement() {
               </div>
               <div className="flex justify-end space-x-2">
                 <button type="button" onClick={() => setShowResetModal(false)} className="px-4 py-2 text-gray-600 rounded hover:bg-gray-100">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Reset Password</button>
+                <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400">Reset Password</button>
               </div>
             </form>
           </div>
@@ -189,7 +189,7 @@ export default function UserManagement() {
               </div>
               <div className="flex justify-end space-x-2 pt-2">
                 <button type="button" onClick={() => setShowParentModal(false)} className="px-4 py-2 text-gray-600 rounded hover:bg-gray-100">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create Parent</button>
+                <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400">Create Parent</button>
               </div>
             </form>
           </div>

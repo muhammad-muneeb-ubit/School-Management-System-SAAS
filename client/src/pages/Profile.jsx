@@ -6,8 +6,10 @@ import { showSuccess, showError } from '../utils/sweetAlert';
 export default function Profile() {
   const [profile, setProfile] = useState({ firstName: '', lastName: '', phone: '', email: '', role: '' });
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/auth/me');
         setProfile({
@@ -18,21 +20,26 @@ export default function Profile() {
           role: res.data.role || ''
         });
       } catch (err) { console.error(err); }
+      finally { setLoading(false); }
     };
     fetchProfile();
   }, []);
 
   const handleProfileUpdate = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       await api.put('/auth/profile', profile);
       showSuccess('Profile updated successfully!');
     } catch (err) {
       showError('Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handlePasswordUpdate = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       await api.put('/auth/update-password', passwords);
@@ -40,6 +47,8 @@ export default function Profile() {
       setPasswords({ currentPassword: '', newPassword: '' });
     } catch (err) {
       showError(err.response?.data?.error || 'Failed to update password');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,7 +79,7 @@ export default function Profile() {
               <label className="block text-sm font-medium mb-1">Phone Number</label>
               <input type="text" value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} className="w-full border border-gray-300 p-2 rounded" />
             </div>
-            <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Changes</button>
+            <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-blue-400">Save Changes</button>
           </form>
         </div>
 
@@ -87,7 +96,7 @@ export default function Profile() {
               <input type="password" value={passwords.newPassword} onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required minLength="6" />
               <p className="text-xs text-gray-500 mt-1">Minimum 6 characters.</p>
             </div>
-            <button type="submit" className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Update Password</button>
+            <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 disabled:bg-green-400">Update Password</button>
           </form>
           {/* Account Information Card */}
           <div className="bg-white p-6 rounded-lg shadow">

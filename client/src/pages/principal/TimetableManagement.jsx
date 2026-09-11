@@ -184,7 +184,7 @@ export default function TimetableManagement() {
       ))}
 
       {/* Main Grid */}
-      {!loading && (<div className={`grid grid-cols-1 lg:grid-cols-${user?.role === 'Principal' ? '3' : '1'} gap-6`}>
+      {!loading && (<div className={`grid grid-cols-1 ${user?.role === 'Principal' ? 'xl:grid-cols-3' : ''} gap-6`}>
 
         {/* Add Period Form (Principal Only) */}
         {user?.role === 'Principal' && (
@@ -214,29 +214,30 @@ export default function TimetableManagement() {
         )}
 
         {/* Timetable Display (For Everyone) */}
-        <div className={`bg-white p-4 rounded-lg shadow ${user?.role === 'Principal' ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
+        <div className={`bg-white p-4 rounded-lg shadow ${user?.role === 'Principal' ? 'xl:col-span-2' : 'xl:col-span-1'}`}>
           <h2 className="text-lg font-semibold mb-4">Current Timetable</h2>
           {loading ? <Loader /> : timetable && timetable.schedule ? (
-            <div className="space-y-4">
-              {timetable.schedule.map((day, i) => (
-                <div key={i} className="border-l-4 border-blue-500 pl-3">
-                  <h3 className="font-bold text-gray-700">{day.day}</h3>
-                  <div className="mt-2 space-y-1">
-                    {/* Added safe array check and optional chaining */}
-                    {Array.isArray(day.periods) && day.periods.length > 0 ? (
-                      day.periods.map((p, j) => (
-                        <div key={j} className="text-sm bg-gray-50 p-2 rounded flex justify-between items-center">
-                          <span>{p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}</span>
-                          <span className="font-medium">{p?.subjectId?.name || 'N/A'}</span>
-                          <span className="text-gray-500">{p?.teacherId?.profile?.firstName} {p?.teacherId?.profile?.lastName || ''}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-xs text-gray-400 italic">No periods added for this day.</p>
-                    )}
+            <div className="space-y-4 overflow-x-auto">
+              <div className="min-w-[620px] space-y-4">
+                {timetable.schedule.map((day, i) => (
+                  <div key={i} className="border-l-4 border-blue-500 pl-3">
+                    <h3 className="font-bold text-gray-700">{day.day}</h3>
+                    <div className="mt-2 space-y-1">
+                      {Array.isArray(day.periods) && day.periods.length > 0 ? (
+                        day.periods.map((p, j) => (
+                          <div key={j} className="text-sm bg-gray-50 p-2 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                            <span>{p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}</span>
+                            <span className="font-medium">{p?.subjectId?.name || 'N/A'}</span>
+                            <span className="text-gray-500">{p?.teacherId?.profile?.firstName} {p?.teacherId?.profile?.lastName || ''}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-gray-400 italic">No periods added for this day.</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-gray-500 text-center py-4">No timetable created yet.</p>

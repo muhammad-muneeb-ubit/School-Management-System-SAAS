@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadUser } from './features/auth/authSlice';
+import { fetchTheme } from './features/theme/themeSlice';
 
 import Login from './pages/Login';
 import Unauthorized from './pages/Unauthorized';
@@ -33,15 +34,18 @@ import DataArchive from './pages/principal/DataArchive';
 import NotFound from './pages/NotFound';
 import StudentProfile from './pages/principal/StudentProfile';
 import Profile from './pages/Profile';
+import Branding from './pages/super-admin/Branding';
 
 export default function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(loadUser());
+     dispatch(fetchTheme());
   }, [dispatch]);
 
   return (
+    <>
     <BrowserRouter>
       <Routes>
         <Route path="*" element={<NotFound />} />
@@ -49,11 +53,12 @@ export default function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/profile" element={<ProtectedRoute element={<Profile />} allowedRoles={['Super Admin', 'Principal', 'Teacher', 'Parent']} />} />
 
-        
+
         {/* Super Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute element={<SuperAdminDashboard />} allowedRoles={['Super Admin']} />} />
         <Route path="/admin/logs" element={<ProtectedRoute element={<SuperAdminLogs />} allowedRoles={['Super Admin']} />} />
         <Route path="/admin/principals" element={<ProtectedRoute element={<PrincipalManagement />} allowedRoles={['Super Admin']} />} />
+        <Route path="/admin/branding" element={<ProtectedRoute element={<Branding />} allowedRoles={['Super Admin']} />} />
 
         {/* Principal Routes */}
         <Route path="/principal" element={<ProtectedRoute element={<PrincipalDashboard />} allowedRoles={['Principal']} />} />
@@ -92,5 +97,6 @@ export default function App() {
 
       </Routes>
     </BrowserRouter>
+  </>
   );
 }

@@ -67,7 +67,7 @@ export default function Communication() {
     <DashboardLayout>
       {loading? <HeadingWithButtonSkeleton/>:(<div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Communication</h1>
-        <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+        <button onClick={() => setShowModal(true)} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-400 font-medium">
           + New Announcement
         </button>
       </div>)}
@@ -115,7 +115,7 @@ export default function Communication() {
                     <textarea name="message" value={formData.message} onChange={handleChange} rows="4" className="w-full border border-gray-300 p-2 rounded" required></textarea>
                   </Tooltip>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Audience</label>
                     <select name="audience" value={formData.audience} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded">

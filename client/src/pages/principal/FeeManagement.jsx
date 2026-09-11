@@ -138,7 +138,7 @@ export default function FeeManagement() {
                         <Tooltip text="Select the class for which you want to set the fee structure.">
                             <input type="number" placeholder="Amount (e.g., 5000)" value={structureForm.amount} onChange={(e) => setStructureForm({ ...structureForm, amount: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
                         </Tooltip>
-                        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Save Structure</button>
+                        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-blue-400">Save Structure</button>
                     </form>
                 </div>
 
@@ -153,7 +153,7 @@ export default function FeeManagement() {
                         <Tooltip text="Select the month for which you want to generate invoices.">
                             <input type="month" value={generateForm.month} onChange={(e) => setGenerateForm({ ...generateForm, month: e.target.value })} className="w-full border border-gray-300 p-2 rounded" required />
                         </Tooltip>
-                        <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Generate Invoices</button>
+                        <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 disabled:bg-green-400">Generate Invoices</button>
                     </form>
                 </div>
             </div>

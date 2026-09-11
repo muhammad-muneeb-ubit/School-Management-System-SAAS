@@ -146,14 +146,14 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-800">Student Management</h1>
             <div className="flex space-x-2">
-              <button onClick={showCsvHelp} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 font-medium flex items-center">
+              <button onClick={showCsvHelp} disabled={loading} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 disabled:bg-gray-300 font-medium flex items-center">
                 CSV Help
               </button>
-              <input type="file" accept=".csv" onChange={handleFileUpload} className="hidden" id="csv-upload" />
-              <label htmlFor="csv-upload" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium cursor-pointer">
+              <input type="file" accept=".csv" onChange={handleFileUpload} className="hidden" id="csv-upload" disabled={loading} />
+              <label htmlFor={loading ? undefined : 'csv-upload'} className={`bg-green-600 text-white px-4 py-2 rounded font-medium cursor-pointer ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-green-700'}`}>
                 Bulk Import CSV
               </label>
-              <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+              <button onClick={() => setShowModal(true)} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-400 font-medium">
                 + Admit Student
               </button>
               <button
@@ -175,55 +175,55 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
             />
           </div>
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parent Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status/ Action</th>
-
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredStudents.length > 0 ? (
-                  filteredStudents.map((s) => (
-                    // Inside the <tbody> map function
-                    <tr key={s._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:underline">
-                        <Link to={`/principal/students/${s._id}`}>{s.firstName} {s.lastName}</Link>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.classId?.name || 'N/A'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.parentId?.email || 'N/A'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {s.status === 'Active' ? (
-                          <button
-                            onClick={() => handleStatusChange(s._id, 'Left')}
-                            className="text-red-600 hover:underline font-medium"
-                          >
-                            Mark as Left
-                          </button>
-                        ) : (
-                          <div className="flex items-center space-x-2">
-                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">{s.status}</span>
+            <div className="overflow-x-auto">
+              <table className="min-w-[760px] w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Parent Email</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status/ Action</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredStudents.length > 0 ? (
+                    filteredStudents.map((s) => (
+                      <tr key={s._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:underline">
+                          <Link to={`/principal/students/${s._id}`}>{s.firstName} {s.lastName}</Link>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.classId?.name || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.parentId?.email || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {s.status === 'Active' ? (
                             <button
-                              onClick={() => handleStatusChange(s._id, 'Active')}
-                              className="text-green-600 hover:underline text-xs font-medium"
+                              onClick={() => handleStatusChange(s._id, 'Left')}
+                              className="text-red-600 hover:underline font-medium"
                             >
-                              Re-activate
+                              Mark as Left
                             </button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr><td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">No students found.</td></tr>
-                )}
-              </tbody>
-            </table>
+                          ) : (
+                            <div className="flex items-center flex-wrap gap-2">
+                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">{s.status}</span>
+                              <button
+                                onClick={() => handleStatusChange(s._id, 'Active')}
+                                className="text-green-600 hover:underline text-xs font-medium"
+                              >
+                                Re-activate
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">No students found.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div></>)}
 
       {showModal && (
@@ -232,7 +232,7 @@ firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFir
             <h2 className="text-xl font-bold mb-4">Admit New Student</h2>
             <form onSubmit={handleSubmit} >
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">First Name</label>
                   <Tooltip text="Enter first name (e.g., Muhammad)">

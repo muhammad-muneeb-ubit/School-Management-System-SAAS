@@ -25,7 +25,7 @@ export default function AuditLogs() {
   return (
     <> {loading ? (<>
       <DashboardHeaderSkeleton />
-      <SearchBarSkeleton btn = {true}/>
+      <SearchBarSkeleton btn={true} />
       <div className="h-4 w-72 bg-white p-3 rounded mb-4 "></div>
       <TableSkeleton columnCount={5} rowCount={8} />
     </>)
@@ -52,8 +52,8 @@ export default function AuditLogs() {
         </div>
         <p className="text-sm text-gray-500 mb-4">Logs are automatically deleted after 45 days.</p>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 overflow-x-auto">
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 min-w-[1000px] md:min-w-0">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>

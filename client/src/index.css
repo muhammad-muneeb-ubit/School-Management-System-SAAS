@@ -1,12 +1,17 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 
-body { background-color: #f3f4f6; }
+body {
+  background-color: #f3f4f6;
+}
+button {
+  cursor: pointer;
+}
 
-/* Global Cursor Pointer for Buttons */
-button { cursor: pointer; }
-button:disabled { cursor: not-allowed; }
+button:disabled {
+  cursor: not-allowed;
+}
 
-/* Custom Minimal Loader */
+
 .loader {
   width: 24px;
   height: 24px;
@@ -16,14 +21,323 @@ button:disabled { cursor: not-allowed; }
   animation: spin 0.8s linear infinite;
   margin: 0 auto;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
-/* Simple CSS Tooltip */
-.tooltip { position: relative; display: inline-block; }
-.tooltip .tooltiptext { 
-  visibility: hidden; width: 200px; background-color: #1f2937; color: #fff; 
-  text-align: center; border-radius: 6px; padding: 5px; position: absolute; 
-  z-index: 50; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0; 
-  transition: opacity 0.3s; font-size: 12px; pointer-events: none;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
-.tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #1f2937;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 50;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+} */
+
+@import "tailwindcss";
+
+/* =========================================================
+   DEFAULT SCHOOL THEME
+   These values are replaced dynamically from the database.
+   ========================================================= */
+
+:root {
+  /* ---------- Brand ---------- */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-dark: #1e3a8a;
+
+  --secondary: #64748b;
+  --secondary-hover: #475569;
+  --secondary-light: #f1f5f9;
+
+  /* ---------- Semantic ---------- */
+  --success: #16a34a;
+  --success-hover: #15803d;
+  --success-light: #f0fdf4;
+
+  --warning: #d97706;
+  --warning-hover: #b45309;
+  --warning-light: #fffbeb;
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-light: #fef2f2;
+
+  --info: #0284c7;
+  --info-hover: #0369a1;
+  --info-light: #f0f9ff;
+
+  /* ---------- Application ---------- */
+  --background: #f3f4f6;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+
+  --border: #e5e7eb;
+  --border-dark: #d1d5db;
+
+  --text-primary: #172033;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  /* ---------- Sidebar ---------- */
+  --sidebar-bg: var(--primary-dark);
+  --sidebar-hover: var(--primary-hover);
+  --sidebar-active: var(--primary);
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+
+  /* ---------- Forms ---------- */
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-focus: var(--primary);
+
+  /* ---------- UI ---------- */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================================================
+   TAILWIND v4 THEME
+   ========================================================= */
+
+@theme {
+  /* ---------- Brand ---------- */
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-light: var(--secondary-light);
+
+  /* ---------- Semantic ---------- */
+
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  --color-success-light: var(--success-light);
+
+  --color-warning: var(--warning);
+  --color-warning-hover: var(--warning-hover);
+  --color-warning-light: var(--warning-light);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-light: var(--danger-light);
+
+  --color-info: var(--info);
+  --color-info-hover: var(--info-hover);
+  --color-info-light: var(--info-light);
+
+  /* ---------- Application ---------- */
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-border: var(--border);
+  --color-border-dark: var(--border-dark);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* ---------- Sidebar ---------- */
+
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active: var(--sidebar-active);
+
+  /* ---------- Forms ---------- */
+
+  --color-input: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-focus: var(--input-focus);
+}
+
+/* =========================================================
+   LEGACY BLUE CLASSES -> THEME VARIABLES
+   This keeps older Tailwind blue utility classes working with
+   the school branding without rewriting every page.
+   ========================================================= */
+
+.bg-blue-50 { background-color: var(--primary-light) !important; }
+.bg-blue-100 { background-color: color-mix(in srgb, var(--primary) 10%, white) !important; }
+.bg-blue-400 { background-color: color-mix(in srgb, var(--primary) 70%, white) !important; }
+.bg-blue-500 { background-color: var(--primary) !important; }
+.bg-blue-600 { background-color: var(--primary) !important; }
+.bg-blue-700 { background-color: var(--primary-hover) !important; }
+.bg-blue-800 { background-color: var(--sidebar-bg) !important; }
+.bg-blue-900 { background-color: var(--sidebar-active) !important; }
+
+.text-blue-500 { color: var(--primary) !important; }
+.text-blue-600 { color: var(--primary) !important; }
+.text-blue-700 { color: var(--primary-dark) !important; }
+
+.border-blue-500 { border-color: var(--primary) !important; }
+.border-blue-700 { border-color: var(--sidebar-border) !important; }
+.border-blue-300 { border-color: color-mix(in srgb, var(--primary) 35%, white) !important; }
+.border-blue-200 { border-color: color-mix(in srgb, var(--primary) 25%, white) !important; }
+
+.hover\:bg-blue-700:hover { background-color: var(--primary-hover) !important; }
+.hover\:bg-blue-600:hover { background-color: var(--primary) !important; }
+.hover\:text-blue-600:hover { color: var(--primary) !important; }
+.hover\:text-blue-500:hover { color: var(--primary) !important; }
+.hover\:underline:hover { text-decoration-color: var(--primary) !important; }
+
+.disabled\:bg-blue-400:disabled,
+.disabled\:bg-blue-400[disabled] {
+  background-color: color-mix(in srgb, var(--primary) 85%, white) !important;
+}
+
+.focus\:ring-blue-500:focus,
+.focus:ring-blue-500:focus,
+.focus\:border-blue-500:focus {
+  --tw-ring-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent) !important;
+}
+
+.from-blue-800 { --tw-gradient-from: var(--primary-dark) var(--tw-gradient-from-position) !important; }
+.to-indigo-900 { --tw-gradient-to: var(--primary-dark) !important; }
+
+/* Common app button style */
+.primary-btn,
+.primary-btn:hover {
+  background-color: var(--primary) !important;
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+.sidebar-nav-active {
+  background-color: var(--sidebar-active) !important;
+}
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+/* Buttons */
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   CUSTOM LOADER
+   ========================================================= */
+
+.loader {
+  width: 24px;
+  height: 24px;
+
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   TOOLTIP
+   ========================================================= */
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+
+  width: 200px;
+
+  background-color: var(--text-primary);
+  color: #fff;
+
+  text-align: center;
+
+  border-radius: var(--radius-sm);
+
+  padding: 5px;
+
+  position: absolute;
+
+  z-index: 50;
+
+  bottom: 125%;
+  left: 50%;
+
+  margin-left: -100px;
+
+  opacity: 0;
+
+  transition: opacity 0.3s;
+
+  font-size: 12px;
+
+  pointer-events: none;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

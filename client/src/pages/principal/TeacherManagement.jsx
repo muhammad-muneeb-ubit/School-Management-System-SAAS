@@ -130,7 +130,7 @@ export default function TeacherManagement() {
     <div className="flex justify-between items-center mb-6">
 
       <h1 className="text-2xl font-bold text-gray-800">Teacher Management</h1>
-      <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">+ Add Teacher</button>
+      <button onClick={() => setShowModal(true)} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-400 font-medium">+ Add Teacher</button>
     </div>
     <div className="bg-white p-4 rounded-lg shadow mb-4">
       <input
@@ -143,43 +143,47 @@ export default function TeacherManagement() {
     </div>
 
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assigned Classes</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {(() => {
-            const filteredTeachers = teachers.filter(t =>
-              `${t.profile?.firstName} ${t.profile?.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-              t.email.toLowerCase().includes(search.toLowerCase()) ||
-              (t.profile?.phone || '').includes(search)
-            );
+      <div className="overflow-x-auto">
+        <table className="min-w-[760px] w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assigned Classes</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {(() => {
+              const filteredTeachers = teachers.filter(t =>
+                `${t.profile?.firstName} ${t.profile?.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
+                t.email.toLowerCase().includes(search.toLowerCase()) ||
+                (t.profile?.phone || '').includes(search)
+              );
 
-            return filteredTeachers.length > 0 ? (
-              filteredTeachers.map((t) => (
-                <tr key={t._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{t.profile?.firstName} {t.profile?.lastName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{t.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{t.profile?.phone || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t.assignments?.length || 0}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm flex space-x-2">
-                    <button onClick={() => openAssignModal(t)} className="text-blue-600 hover:underline font-medium">Assign</button>
-                    <button onClick={() => handleDeactivate(t._id)} className="text-red-600 hover:underline font-medium">Deactivate</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">No teachers found.</td></tr>
-            );
-          })()}
-        </tbody>
-      </table>
+              return filteredTeachers.length > 0 ? (
+                filteredTeachers.map((t) => (
+                  <tr key={t._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{t.profile?.firstName} {t.profile?.lastName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{t.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{t.profile?.phone || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t.assignments?.length || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex flex-wrap gap-2">
+                        <button onClick={() => openAssignModal(t)} disabled={loading} className="text-blue-600 hover:underline disabled:text-blue-300 font-medium">Assign</button>
+                        <button onClick={() => handleDeactivate(t._id)} disabled={loading} className="text-red-600 hover:underline disabled:text-red-300 font-medium">Deactivate</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">No teachers found.</td></tr>
+              );
+            })()}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     {/* Add Teacher Modal */}
@@ -188,10 +192,10 @@ export default function TeacherManagement() {
         <div className="bg-white rounded-lg p-6 w-full max-w-lg">
           <h2 className="text-xl font-bold mb-4">Add New Teacher</h2>
           <form onSubmit={handleSubmit} >
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div><label className="block text-sm font-medium mb-1">First Name</label><input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded form-field-hint" data-tooltip="Enter the teacher's first name as it should appear in records." required /></div>
               <div><label className="block text-sm font-medium mb-1">Last Name</label><input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded form-field-hint" data-tooltip="Add the teacher's last name for identification in class rosters." required /></div>
-              <div className="col-span-2"><label className="block text-sm font-medium mb-1">Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded form-field-hint" data-tooltip="Use the official email address for login and communication." required /></div>
+              <div className="sm:col-span-2"><label className="block text-sm font-medium mb-1">Email</label><input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded form-field-hint" data-tooltip="Use the official email address for login and communication." required /></div>
               <div><label className="block text-sm font-medium mb-1">Phone</label><input type="text" name="phone" value={formData.phone} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded form-field-hint" data-tooltip="Add a contact number for urgent communication or updates." /></div>
               <div><label className="block text-sm font-medium mb-1">Temp Password</label><input type="text" name="password" value={formData.password} onChange={handleChange} className="w-full border border-gray-300 p-2 rounded form-field-hint" data-tooltip="Set an initial password and ask the teacher to change it after first login." required /></div>
             </div>

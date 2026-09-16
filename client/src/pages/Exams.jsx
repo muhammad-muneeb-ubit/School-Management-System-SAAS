@@ -5,15 +5,13 @@ import { useSelector } from 'react-redux';
 import { downloadFile } from '../utils/downloadFile';
 import { showSuccess, showError, showConfirm } from '../utils/sweetAlert';
 import Tooltip from '../components/Tooltip';
-import { TableSkeleton,SearchBarSkeleton, HeadingWithButtonSkeleton } from '../components/skeletons';
+import { TableSkeleton, SearchBarSkeleton, HeadingWithButtonSkeleton } from '../components/skeletons';
 export default function Exams() {
     const [classes, setClasses] = useState([]);
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({ name: '', classId: '', totalMarksPerSubject: 100, passingPercentage: 40 });
-
-    // New state for Marks Entry
     const [showMarksModal, setShowMarksModal] = useState(false);
     const [selectedExam, setSelectedExam] = useState(null);
     const [subjects, setSubjects] = useState([]);
@@ -23,6 +21,7 @@ export default function Exams() {
     const [selectedSubject, setSelectedSubject] = useState('');
     const [marksData, setMarksData] = useState({}); // { studentId: marks }
     const { user } = useSelector((state) => state.auth);
+
     const fetchClasses = async () => {
         setLoading(true);
         try {
@@ -144,85 +143,213 @@ export default function Exams() {
                     <button onClick={() => setShowModal(true)} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">+ Create Exam</button>
                 </div>
             )}
-           {(loading) ? (
-                <SearchBarSkeleton  btn = {true}/>
+            {(loading) ? (
+                <SearchBarSkeleton btn={true} />
             ) : (
                 <div className="bg-white p-4 rounded-lg shadow mb-4 flex flex-col md:flex-row gap-4">
-                <input
-                    type="text"
-                    placeholder="Search exams by name..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 border border-gray-300  p-2 rounded"
-                />
-                <select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="border border-gray-300  p-2 rounded w-full md:w-48"
-                >
-                    <option value="">All Statuses</option>
-                    <option value="Draft">Draft</option>
-                    <option value="Published">Published</option>
-                </select>
-            </div>)}
+                    <input
+                        type="text"
+                        placeholder="Search exams by name..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="flex-1 border border-gray-300  p-2 rounded"
+                    />
+                    <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="border border-gray-300  p-2 rounded w-full md:w-48"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Published">Published</option>
+                    </select>
+                </div>)}
 
-            {loading? <TableSkeleton/>:(<div className="bg-white border border-gray-300 rounded-lg shadow overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exam Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {(() => {
-                            const filteredExams = exams.filter(ex =>
-                                ex.name.toLowerCase().includes(search.toLowerCase()) &&
-                                (!filterStatus || ex.status === filterStatus)
-                            );
+            {loading ? <TableSkeleton /> : (
+                // <div className="bg-white border border-gray-300 rounded-lg shadow overflow-hidden">
+                //     <table className="min-w-full divide-y divide-gray-200">
+                //         <thead className="bg-gray-50">
+                //             <tr>
+                //                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exam Name</th>
+                //                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Class</th>
+                //                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                //                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                //             </tr>
+                //         </thead>
+                //         <tbody className="bg-white divide-y divide-gray-200">
+                //             {(() => {
+                //                 const filteredExams = exams.filter(ex =>
+                //                     ex.name.toLowerCase().includes(search.toLowerCase()) &&
+                //                     (!filterStatus || ex.status === filterStatus)
+                //                 );
 
-                            return filteredExams.length > 0 ? (
-                                filteredExams.map((ex) => (
-                                    <tr key={ex._id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ex.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ex.classId?.name || 'N/A'}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span className={`px-2 py-1 rounded-full text-xs ${ex.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                                {ex.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                                            <button onClick={() => openMarksModal(ex)} className="text-blue-600 hover:underline font-medium">Enter Marks</button>
+                //                 return filteredExams.length > 0 ? (
+                //                     filteredExams.map((ex) => (
+                //                         <tr key={ex._id}>
+                //                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ex.name}</td>
+                //                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{ex.classId?.name || 'N/A'}</td>
+                //                             <td className="px-6 py-4 whitespace-nowrap text-sm">
+                //                                 <span className={`px-2 py-1 rounded-full text-xs ${ex.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                //                                     {ex.status}
+                //                                 </span>
+                //                             </td>
+                //                             <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                //                                 <button onClick={() => openMarksModal(ex)} className="text-blue-600 hover:underline font-medium">Enter Marks</button>
 
-                                            {/* Add this PDF Button - Only show if Published */}
-                                            {ex.status === 'Published' && (
-                                                <button
-                                                    onClick={() => downloadFile(`/pdf/class-result?examId=${ex._id}&classId=${ex.classId?._id}`, `Class_Result_${ex.name}.pdf`)}
-                                                    className="text-purple-600 hover:underline font-medium"
+                //                                 {/* Add this PDF Button - Only show if Published */}
+                //                                 {ex.status === 'Published' && (
+                //                                     <button
+                //                                         onClick={() => downloadFile(`/pdf/class-result?examId=${ex._id}&classId=${ex.classId?._id}`, `Class_Result_${ex.name}.pdf`)}
+                //                                         className="text-purple-600 hover:underline font-medium"
+                //                                     >
+                //                                         Result PDF
+                //                                     </button>
+                //                                 )}
+
+                //                                 {user?.role === 'Principal' && ex.status === 'Draft' && (
+                //                                     <button onClick={() => handlePublish(ex._id)} className="text-green-600 hover:underline font-medium">Publish</button>
+                //                                 )}
+                //                             </td>
+                //                         </tr>
+                //                     ))
+                //                 ) : (
+                //                     <tr><td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">No exams found.</td></tr>
+                //                 );
+                //             })()}
+                //         </tbody>
+                //     </table>
+                // </div>
+
+                <div className="bg-white border border-gray-300 rounded-lg shadow overflow-hidden">
+                    <div className="w-full overflow-x-auto">
+                        <table className="w-full table-fixed divide-y divide-gray-200">
+
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="w-[29%] px-3 sm:px-4 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Exam Name
+                                    </th>
+
+                                    <th className="w-[19%] px-3 sm:px-4 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Class
+                                    </th>
+
+                                    <th className="w-[20%] px-3 sm:px-4 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Status
+                                    </th>
+
+                                    <th className="w-[32%] px-3 sm:px-4 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {(() => {
+                                    const filteredExams = exams.filter(ex =>
+                                        ex.name.toLowerCase().includes(search.toLowerCase()) &&
+                                        (!filterStatus || ex.status === filterStatus)
+                                    );
+
+                                    return filteredExams.length > 0 ? (
+                                        filteredExams.map((ex) => (
+                                            <tr
+                                                key={ex._id}
+                                                className="hover:bg-gray-50"
+                                            >
+
+                                                {/* Exam Name */}
+                                                <td
+                                                    className="px-3 sm:px-4 py-3 text-sm text-gray-900 truncate"
+                                                    title={ex.name}
                                                 >
-                                                    Result PDF
-                                                </button>
-                                            )}
+                                                    {ex.name}
+                                                </td>
 
-                                            {user?.role === 'Principal' && ex.status === 'Draft' && (
-                                                <button onClick={() => handlePublish(ex._id)} className="text-green-600 hover:underline font-medium">Publish</button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr><td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">No exams found.</td></tr>
-                            );
-                        })()}
-                    </tbody>
-                </table>
-            </div>)}
+                                                {/* Class */}
+                                                <td className="px-3 sm:px-4 py-3 text-sm text-gray-900 truncate">
+                                                    {ex.classId?.name || 'N/A'}
+                                                </td>
+
+                                                {/* Status */}
+                                                <td className="px-3 sm:px-4 py-3 text-sm">
+                                                    <span
+                                                        className={`inline-block px-2 py-1 rounded-full text-xs ${ex.status === 'Published'
+                                                                ? 'bg-green-100 text-green-700'
+                                                                : 'bg-yellow-100 text-yellow-700'
+                                                            }`}
+                                                    >
+                                                        {ex.status}
+                                                    </span>
+                                                </td>
+
+                                                {/* Actions */}
+                                                <td className="px-3 sm:px-4 py-3 text-sm">
+                                                    <div className="flex flex-wrap gap-x-3 gap-y-1">
+
+                                                        {/* Enter Marks */}
+                                                        <button
+                                                            onClick={() => openMarksModal(ex)}
+                                                            className="text-blue-600 hover:underline font-medium whitespace-nowrap"
+                                                        >
+                                                            Enter Marks
+                                                        </button>
+
+                                                        {/* Result PDF */}
+                                                        {ex.status === 'Published' && (
+                                                            <button
+                                                                onClick={() =>
+                                                                    downloadFile(
+                                                                        `/pdf/class-result?examId=${ex._id}&classId=${ex.classId?._id}`,
+                                                                        `Class_Result_${ex.name}.pdf`
+                                                                    )
+                                                                }
+                                                                className="text-purple-600 hover:underline font-medium whitespace-nowrap"
+                                                            >
+                                                                Result PDF
+                                                            </button>
+                                                        )}
+
+                                                        {/* Publish */}
+                                                        {user?.role === 'Principal' &&
+                                                            ex.status === 'Draft' && (
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handlePublish(ex._id)
+                                                                    }
+                                                                    className="text-green-600 hover:underline font-medium whitespace-nowrap"
+                                                                >
+                                                                    Publish
+                                                                </button>
+                                                            )}
+
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td
+                                                colSpan="4"
+                                                className="px-4 py-6 text-center text-sm text-gray-500"
+                                            >
+                                                No exams found.
+                                            </td>
+                                        </tr>
+                                    );
+                                })()}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            )}
 
             {/* Create Exam Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md">
                         <h2 className="text-xl font-bold mb-4">Create New Exam</h2>
                         <form onSubmit={handleSubmit}>
@@ -264,7 +391,7 @@ export default function Exams() {
 
             {/* Enter Marks Modal */}
             {showMarksModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Enter Marks: {selectedExam.name}</h2>
 

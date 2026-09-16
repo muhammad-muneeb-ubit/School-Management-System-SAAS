@@ -148,8 +148,8 @@ export default function TimetableManagement() {
       {/* Dynamic Filters based on Role */}
       {loading ? (
         <>
-        <ClassSectionFilterSkeleton />
-        <TimetableSkeleton/>
+          {user?.role === 'Principal' && <ClassSectionFilterSkeleton />}
+          <TimetableSkeleton />
         </>
       ) : (user?.role === 'Parent' ? (
         <div className="bg-white p-4 rounded-lg shadow mb-6">
@@ -159,7 +159,7 @@ export default function TimetableManagement() {
           </select>
         </div>
       ) : (
-        <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        user?.role === 'Principal' && (<div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Class</label>
             <select value={selectedClass} onChange={handleClassChange} className="w-full border border-gray-300 p-2 rounded">
@@ -180,7 +180,7 @@ export default function TimetableManagement() {
               )}
             </select>
           </div>
-        </div>
+        </div>)
       ))}
 
       {/* Main Grid */}
@@ -218,24 +218,131 @@ export default function TimetableManagement() {
           <h2 className="text-lg font-semibold mb-4">Current Timetable</h2>
           {loading ? <Loader /> : timetable && timetable.schedule ? (
             <div className="space-y-4 overflow-x-auto">
-              <div className="min-w-[620px] space-y-4">
+              <div className="W space-y-4">
                 {timetable.schedule.map((day, i) => (
-                  <div key={i} className="border-l-4 border-blue-500 pl-3">
-                    <h3 className="font-bold text-gray-700">{day.day}</h3>
-                    <div className="mt-2 space-y-1">
-                      {Array.isArray(day.periods) && day.periods.length > 0 ? (
-                        day.periods.map((p, j) => (
-                          <div key={j} className="text-sm bg-gray-50 p-2 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                            <span>{p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}</span>
-                            <span className="font-medium">{p?.subjectId?.name || 'N/A'}</span>
-                            <span className="text-gray-500">{p?.teacherId?.profile?.firstName} {p?.teacherId?.profile?.lastName || ''}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-xs text-gray-400 italic">No periods added for this day.</p>
-                      )}
-                    </div>
-                  </div>
+                  // <div key={i} className="border-l-4 border-blue-500 pl-3">
+                  //   <h3 className="font-bold text-gray-700">{day.day}</h3>
+                  //   <div className="mt-2 space-y-1">
+                  //     {Array.isArray(day.periods) && day.periods.length > 0 ? (
+                  //       day.periods.map((p, j) => (
+                  //         <div key={j} className="text-sm bg-gray-50 p-2 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                  //           <span>{p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}</span>
+                  //           <span className="font-medium">{p?.subjectId?.name || 'N/A'}</span>
+                  //           <span className="text-gray-500">{p?.teacherId?.profile?.firstName} {p?.teacherId?.profile?.lastName || ''}</span>
+                  //         </div>
+                  //       ))
+                  //     ) : (
+                  //       <p className="text-xs text-gray-400 italic">No periods added for this day.</p>
+                  //     )}
+                  //   </div>
+                  // </div>
+
+
+                  <div className="w-full space-y-4">
+
+  {timetable.schedule.map((day, i) => (
+    <div
+      key={i}
+      className="border-l-4 border-blue-500 pl-3 sm:pl-4"
+    >
+
+      {/* Day */}
+      <h3 className="font-bold text-gray-700 text-sm sm:text-base mb-2">
+        {day.day}
+      </h3>
+
+      {Array.isArray(day.periods) && day.periods.length > 0 ? (
+        <div className="space-y-2">
+
+          {day.periods.map((p, j) => (
+
+            <div key={j}>
+
+              {/* ============================= */}
+              {/* LARGE SCREEN CARD              */}
+              {/* ============================= */}
+
+              <div className="hidden sm:grid grid-cols-[28%_32%_40%] items-center gap-2 bg-gray-50 p-3 rounded">
+
+                {/* Time */}
+                <span className="text-sm text-gray-700 truncate">
+                  {p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}
+                </span>
+
+                {/* Subject */}
+                <span
+                  className="text-sm font-medium text-gray-900 truncate"
+                  title={p?.subjectId?.name || 'N/A'}
+                >
+                  {p?.subjectId?.name || 'N/A'}
+                </span>
+
+                {/* Teacher */}
+                <span
+                  className="text-sm text-gray-500 truncate"
+                  title={`${p?.teacherId?.profile?.firstName || ''} ${p?.teacherId?.profile?.lastName || ''}`}
+                >
+                  {p?.teacherId?.profile?.firstName || ''}
+                  {' '}
+                  {p?.teacherId?.profile?.lastName || ''}
+                </span>
+
+              </div>
+
+
+              {/* ============================= */}
+              {/* SMALL SCREEN CARD              */}
+              {/* ============================= */}
+
+              <div className="sm:hidden bg-gray-50 rounded p-3">
+
+                <div className="flex items-center justify-between gap-2">
+
+                  {/* Time */}
+                  <span className="text-xs text-gray-600 font-medium">
+                    {p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}
+                  </span>
+
+                  {/* Subject */}
+                  <span
+                    className="text-sm font-semibold text-gray-900 text-right truncate"
+                    title={p?.subjectId?.name || 'N/A'}
+                  >
+                    {p?.subjectId?.name || 'N/A'}
+                  </span>
+
+                </div>
+
+                {/* Teacher */}
+                <div
+                  className="mt-1 text-xs text-gray-500 truncate"
+                  title={`${p?.teacherId?.profile?.firstName || ''} ${p?.teacherId?.profile?.lastName || ''}`}
+                >
+                  {p?.teacherId?.profile?.firstName || ''}
+                  {' '}
+                  {p?.teacherId?.profile?.lastName || ''}
+                </div>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      ) : (
+
+        <p className="text-xs text-gray-400 italic">
+          No periods added for this day.
+        </p>
+
+      )}
+
+    </div>
+  ))}
+
+</div>
                 ))}
               </div>
             </div>

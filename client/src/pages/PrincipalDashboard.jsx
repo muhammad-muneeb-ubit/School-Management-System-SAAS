@@ -118,29 +118,10 @@
 // } 
 
 import { useEffect, useState } from 'react';
-
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../services/api';
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from 'recharts';
-
-import {
-  StatCardSkeleton,
-  BarChartSkeleton,
-  PieChartSkeleton,
-  DashboardHeaderSkeleton,
-} from '../components/skeletons';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,} from 'recharts';
+import { StatCardSkeleton, BarChartSkeleton, PieChartSkeleton, DashboardHeaderSkeleton,} from '../components/skeletons';
 
 export default function PrincipalDashboard() {
   const [stats, setStats] = useState(null);

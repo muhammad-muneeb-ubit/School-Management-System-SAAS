@@ -183,7 +183,7 @@ export default function FeeManagement() {
             </div>
 
             {/* Fees List */}
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-lg shadow overflow-auto">
                 <div className="p-4 border-b">
                     <h2 className="text-lg font-semibold">Fee Records</h2>
                 </div>

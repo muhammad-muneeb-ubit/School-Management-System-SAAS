@@ -161,61 +161,199 @@ export default function Attendance() {
       {/* Student List & Toggles */}
       {resultLoading ? <TableSkeleton /> : (
         students.length > 0 ? (
+          // <div className="bg-white rounded-lg shadow overflow-hidden">
+          //   <div className="p-4 border-b flex justify-between items-center">
+          //     <h2 className="text-lg font-semibold">Students ({students.length})</h2>
+          //     <div className="flex space-x-2">
+          //       <button onClick={handleSave} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
+          //         {loading ? 'Saving...' : 'Save Attendance'}
+          //       </button>
+          //       <button
+          //         onClick={() => downloadFile(`/pdf/attendance-sheet?classId=${selectedClass}&sectionId=${selectedSection}&date=${date}`, 'Attendance_Sheet.pdf')}
+          //         className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium ml-2"
+          //       >
+          //         Download Sheet PDF
+          //       </button>
+          //     </div>
+          //   </div>
+          //   <table className="min-w-full divide-y divide-gray-200 overflow-x-auto">
+          //     <thead className="bg-gray-50">
+          //       <tr>
+          //         <th className="w-[20%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
+          //         <th className="w-[30%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+          //         <th className="w-[50%] px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+          //       </tr>
+          //     </thead>
+          //     <tbody className="bg-white divide-y divide-gray-200">
+          //       {students.map((s) => (
+          //         <tr key={s._id}>
+          //           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
+          //           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{s.firstName} {s.lastName}</td>
+          //           <td className="px-4 py-3 whitespace-nowrap text-sm">
+          //             <div className="flex space-x-2">
+          //               <button
+          //                 onClick={() => toggleAttendance(s._id, 'Present')}
+          //                 className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Present' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+          //               >
+          //                 Present
+          //               </button>
+          //               <button
+          //                 onClick={() => toggleAttendance(s._id, 'Absent')}
+          //                 className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Absent' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+          //               >
+          //                 Absent
+          //               </button>
+          //               <button
+          //                 onClick={() => toggleAttendance(s._id, 'Leave')}
+          //                 className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Leave' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+          //               >
+          //                 Leave
+          //               </button>
+          //             </div>
+          //           </td>
+          //         </tr>
+          //       ))}
+          //     </tbody>
+          //   </table>
+          // </div>
+
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Students ({students.length})</h2>
-              <div className="flex space-x-2">
-                <button onClick={handleSave} disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-medium">
-                  {loading ? 'Saving...' : 'Save Attendance'}
-                </button>
-                <button
-                  onClick={() => downloadFile(`/pdf/attendance-sheet?classId=${selectedClass}&sectionId=${selectedSection}&date=${date}`, 'Attendance_Sheet.pdf')}
-                  className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium ml-2"
-                >
-                  Download Sheet PDF
-                </button>
+
+            {/* Header */}
+            <div className="p-4 border-b">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                <h2 className="text-lg font-semibold">
+                  Students ({students.length})
+                </h2>
+
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+
+                  {/* Save Attendance */}
+                  <button
+                    onClick={handleSave}
+                    disabled={loading}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-400 font-medium w-full sm:w-auto"
+                  >
+                    {loading ? 'Saving...' : 'Save Attendance'}
+                  </button>
+
+                  {/* Download PDF */}
+                  <button
+                    onClick={() =>
+                      downloadFile(
+                        `/pdf/attendance-sheet?classId=${selectedClass}&sectionId=${selectedSection}&date=${date}`,
+                        'Attendance_Sheet.pdf'
+                      )
+                    }
+                    className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 font-medium w-full sm:w-auto"
+                  >
+                    Download Sheet PDF
+                  </button>
+
+                </div>
               </div>
             </div>
-            <table className="min-w-full divide-y divide-gray-200 ">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {students.map((s) => (
-                  <tr key={s._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.rollNumber}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.firstName} {s.lastName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => toggleAttendance(s._id, 'Present')}
-                          className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Present' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                        >
-                          Present
-                        </button>
-                        <button
-                          onClick={() => toggleAttendance(s._id, 'Absent')}
-                          className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Absent' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                        >
-                          Absent
-                        </button>
-                        <button
-                          onClick={() => toggleAttendance(s._id, 'Leave')}
-                          className={`px-3 py-1 rounded-full font-medium ${attendanceRecords[s._id] === 'Leave' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-600'}`}
-                        >
-                          Leave
-                        </button>
-                      </div>
-                    </td>
+
+            {/* Table */}
+            <div className="w-full overflow-hidden">
+              <table className="w-full table-fixed divide-y divide-gray-200">
+
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="w-[18%] px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                      Roll No
+                    </th>
+
+                    <th className="w-[32%] px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                      Name
+                    </th>
+
+                    <th className="w-[50%] px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase">
+                      Status
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="bg-white divide-y divide-gray-200">
+
+                  {students.map((s) => (
+                    <tr
+                      key={s._id}
+                      className="hover:bg-gray-50"
+                    >
+
+                      {/* Roll No */}
+                      <td className="px-3 py-2.5 text-sm text-gray-900 truncate">
+                        {s.rollNumber}
+                      </td>
+
+                      {/* Name */}
+                      <td
+                        className="px-3 py-2.5 text-sm text-gray-900 truncate"
+                        title={`${s.firstName} ${s.lastName}`}
+                      >
+                        {s.firstName} {s.lastName}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-2 sm:px-3 py-2.5">
+
+                        <div className="grid grid-cols-3 gap-1 sm:flex sm:flex-wrap sm:gap-2">
+
+                          {/* Present */}
+                          <button
+                            onClick={() =>
+                              toggleAttendance(s._id, 'Present')
+                            }
+                            className={`w-full sm:w-auto px-2 sm:px-3 py-1.5 sm:py-1 rounded-full font-medium text-xs sm:text-sm ${attendanceRecords[s._id] === 'Present'
+                                ? 'bg-green-500 text-white'
+                                : 'bg-gray-100 text-gray-600'
+                              }`}
+                          >
+                            Present
+                          </button>
+
+                          {/* Absent */}
+                          <button
+                            onClick={() =>
+                              toggleAttendance(s._id, 'Absent')
+                            }
+                            className={`w-full sm:w-auto px-2 sm:px-3 py-1.5 sm:py-1 rounded-full font-medium text-xs sm:text-sm ${attendanceRecords[s._id] === 'Absent'
+                                ? 'bg-red-500 text-white'
+                                : 'bg-gray-100 text-gray-600'
+                              }`}
+                          >
+                            Absent
+                          </button>
+
+                          {/* Leave */}
+                          <button
+                            onClick={() =>
+                              toggleAttendance(s._id, 'Leave')
+                            }
+                            className={`w-full sm:w-auto px-2 sm:px-3 py-1.5 sm:py-1 rounded-full font-medium text-xs sm:text-sm ${attendanceRecords[s._id] === 'Leave'
+                                ? 'bg-yellow-500 text-white'
+                                : 'bg-gray-100 text-gray-600'
+                              }`}
+                          >
+                            Leave
+                          </button>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+                  ))}
+
+                </tbody>
+
+              </table>
+            </div>
+
           </div>
+
         ) : (
           selectedSection && <div className="bg-white p-6 rounded-lg shadow text-center text-gray-500">No students found in this section.</div>
         )

@@ -186,7 +186,7 @@ export const getDashboardStats = async (req, res, next) => {
         // 2. Fee Stats for Current Month
         const feeStats = await Fee.aggregate([
             { $match: { branchId: new mongoose.Types.ObjectId(branchId), month: currentMonth } },
-            {
+            { 
                 $group: {
                     _id: null,
                     totalCollected: { $sum: "$amountPaid" },
@@ -198,24 +198,30 @@ export const getDashboardStats = async (req, res, next) => {
         const collected = feeStats.length > 0 ? feeStats[0].totalCollected : 0;
         const pending = feeStats.length > 0 ? feeStats[0].totalPending : 0;
 
-        // 3. Attendance Stats for the LATEST marked day
+        // 3. Attendance Stats for TODAY ONLY (Robust Date Range)
         let presentToday = 0;
         let absentToday = 0;
 
-        // Find the most recent date attendance was marked
-        const latestAttendance = await Attendance.findOne({ branchId: new mongoose.Types.ObjectId(branchId) }).sort({ date: -1 });
+        // Create a start and end time for TODAY
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-        if (latestAttendance) {
-            const latestDate = latestAttendance.date;
-            const attendanceAgg = await Attendance.aggregate([
-                { $match: { branchId: new mongoose.Types.ObjectId(branchId), date: latestDate } },
-                { $unwind: "$records" },
-                { $group: { _id: "$records.status", count: { $sum: 1 } } }
-            ]);
+        // Find ALL attendance documents marked today
+        const attendanceTodayDocs = await Attendance.find({
+            branchId: new mongoose.Types.ObjectId(branchId),
+            date: { $gte: startOfToday, $lte: endOfToday }
+        });
 
-            presentToday = attendanceAgg.find(a => a._id === 'Present')?.count || 0;
-            absentToday = attendanceAgg.find(a => a._id === 'Absent')?.count || 0;
-        }
+        // Loop through all documents and count the records manually
+        attendanceTodayDocs.forEach(doc => {
+            if (doc.records && doc.records.length > 0) {
+                doc.records.forEach(r => {
+                    if (r.status === 'Present') presentToday++;
+                    if (r.status === 'Absent') absentToday++;
+                });
+            }
+        });
 
         res.json({
             totalStudents,

@@ -47,7 +47,7 @@ export const setCurrentSession = async (req, res) => {
         const session = await AcademicSession.findByIdAndUpdate(
             req.params.id,
             { status: 'current' },
-            { new: true }
+            { returnDocument: 'after' }
         );
         res.json(session);
     } catch (error) {

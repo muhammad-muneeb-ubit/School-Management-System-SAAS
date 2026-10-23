@@ -6,6 +6,9 @@ import Tooltip from '../../components/Tooltip';
 import { DashboardHeaderSkeleton, AcademicManagementSkeleton } from '../../components/skeletons';
 
 export default function AcademicManagement() {
+  const [sessions, setSessions] = useState([]);
+  const [sessionForm, setSessionForm] = useState({ name: '', startDate: '', endDate: '' });
+
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
 
@@ -95,7 +98,35 @@ export default function AcademicManagement() {
       setLoading(false);
     }
   };
+  // Fetch sessions
+const fetchSessions = async () => {
+  try {
+    const res = await api.get('/academic/sessions');
+    setSessions(res.data);
+  } catch (err) { console.error(err); }
+};
 
+// Add to your existing useEffect:
+useEffect(() => {
+  fetchClasses();
+  fetchSessions(); // ADD THIS
+}, []);
+
+// Handler
+const handleSessionSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await api.post('/academic/sessions', sessionForm);
+    showSuccess('Session created successfully!');
+    setSessionForm({ name: '', startDate: '', endDate: '' });
+    fetchSessions();
+  } catch (err) {
+    showError(err.response?.data?.error || 'Failed to create session');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <> {loading ? (
       <DashboardLayout>
@@ -105,46 +136,108 @@ export default function AcademicManagement() {
     ) : (
       <DashboardLayout>
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Academic Management</h1>
-
-       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-  {/* ================= CLASSES ================= */}
-  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-
-    <div className="flex items-center justify-between mb-5">
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900">
-          Classes
-        </h2>
-        <p className="text-xs text-gray-500 mt-1">
-          Current academic session
-        </p>
-      </div>
-
-      <span className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">
-        {classes.length} Classes
-      </span>
+        {/* Create Session Section */}
+<div className="bg-white p-6 rounded-lg shadow mb-6">
+  <h2 className="text-lg font-semibold mb-4">Create Academic Session</h2>
+  <form onSubmit={handleSessionSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <div>
+      <label className="block text-sm font-medium mb-1">Session Name</label>
+      <input 
+        type="text" 
+        placeholder="e.g., 2024-2025" 
+        value={sessionForm.name} 
+        onChange={(e) => setSessionForm({ ...sessionForm, name: e.target.value })} 
+        className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
+        required 
+      />
     </div>
-
-
-    {/* Add Class */}
-    <form
-      onSubmit={handleClassSubmit}
-      className="flex gap-2 mb-5"
+    <div>
+      <label className="block text-sm font-medium mb-1">Start Date</label>
+      <input 
+        type="date" 
+        value={sessionForm.startDate} 
+        onChange={(e) => setSessionForm({ ...sessionForm, startDate: e.target.value })} 
+        className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
+        required 
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium mb-1">End Date</label>
+      <input 
+        type="date" 
+        value={sessionForm.endDate} 
+        onChange={(e) => setSessionForm({ ...sessionForm, endDate: e.target.value })} 
+        className="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
+        required 
+      />
+    </div>
+    <button 
+      type="submit" 
+      disabled={loading} 
+      className="bg-blue-600 text-white p-2.5 rounded-lg hover:bg-blue-700 disabled:bg-blue-400 font-medium transition"
     >
-      <Tooltip text="Create a class such as Grade 5 or Grade 8 for the current academic session.">
+      Create Session
+    </button>
+  </form>
 
-        <input
-          type="text"
-          placeholder="New Class (e.g. Grade 5)"
-          value={classForm.name}
-          onChange={(e) =>
-            setClassForm({
-              ...classForm,
-              name: e.target.value
-            })
-          }
-          className="
+  {/* Show existing sessions */}
+  {sessions.length > 0 && (
+    <div className="mt-6 border-t pt-4">
+      <h3 className="text-sm font-medium text-gray-600 mb-2">Existing Sessions:</h3>
+      <div className="flex flex-wrap gap-2">
+        {sessions.map(s => (
+          <span key={s._id} className={`px-3 py-1 rounded-full text-xs font-medium ${
+            s.status === 'current' ? 'bg-green-100 text-green-700' : 
+            s.status === 'archived' ? 'bg-gray-100 text-gray-600' : 
+            'bg-yellow-100 text-yellow-700'
+          }`}>
+            {s.name} ({s.status})
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* ================= CLASSES ================= */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Classes
+                </h2>
+                <p className="text-xs text-gray-500 mt-1">
+                  Current academic session
+                </p>
+              </div>
+
+              <span className="text-xs font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">
+                {classes.length} Classes
+              </span>
+            </div>
+
+
+            {/* Add Class */}
+            <form
+              onSubmit={handleClassSubmit}
+              className="flex gap-2 mb-5"
+            >
+              <Tooltip text="Create a class such as Grade 5 or Grade 8 for the current academic session.">
+
+                <input
+                  type="text"
+                  placeholder="New Class (e.g. Grade 5)"
+                  value={classForm.name}
+                  onChange={(e) =>
+                    setClassForm({
+                      ...classForm,
+                      name: e.target.value
+                    })
+                  }
+                  className="
             flex-1
             border border-gray-300
             rounded-lg
@@ -156,15 +249,15 @@ export default function AcademicManagement() {
             focus:border-blue-500
             transition
           "
-          required
-        />
+                  required
+                />
 
-      </Tooltip>
+              </Tooltip>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="
+              <button
+                type="submit"
+                disabled={loading}
+                className="
           bg-blue-600
           hover:bg-blue-700
           disabled:bg-gray-300
@@ -177,100 +270,99 @@ export default function AcademicManagement() {
           transition
           shadow-sm
         "
-      >
-        Add
-      </button>
-    </form>
+              >
+                Add
+              </button>
+            </form>
 
 
-    {/* Classes List */}
-    <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
+            {/* Classes List */}
+            <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
 
-      {classes.map((c) => (
-        <button
-          key={c._id}
-          onClick={() => handleClassSelect(c)}
-          className={`
+              {classes.map((c) => (
+                <button
+                  key={c._id}
+                  onClick={() => handleClassSelect(c)}
+                  className={`
             w-full
             text-left
             px-3 py-2.5
             rounded-lg
             border
             transition-all
-            ${
-              selectedClass?._id === c._id
-                ? `
+            ${selectedClass?._id === c._id
+                      ? `
                   bg-blue-50
                   border-blue-300
                   text-blue-700
                   font-medium
                   shadow-sm
                 `
-                : `
+                      : `
                   bg-gray-50
                   border-transparent
                   text-gray-700
                   hover:bg-gray-100
                   hover:border-gray-200
                 `
-            }
+                    }
           `}
-        >
-          {c.name}
-        </button>
-      ))}
+                >
+                  {c.name}
+                </button>
+              ))}
 
 
-      {classes.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-sm text-gray-500">
-            No classes found.
-          </p>
-        </div>
-      )}
+              {classes.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-sm text-gray-500">
+                    No classes found.
+                  </p>
+                </div>
+              )}
 
-    </div>
-  </div>
-
-
-  {/* ================= SECTIONS ================= */}
-  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-
-    <div className="mb-5">
-      <h2 className="text-lg font-semibold text-gray-900">
-        Sections
-        {selectedClass && (
-          <span className="text-blue-600">
-            {" "}({selectedClass.name})
-          </span>
-        )}
-      </h2>
-
-      <p className="text-xs text-gray-500 mt-1">
-        Manage sections for the selected class
-      </p>
-    </div>
+            </div>
+          </div>
 
 
-    {/* Add Section */}
-    <form
-      onSubmit={handleSectionSubmit}
-      className="flex gap-2 mb-5"
-    >
+          {/* ================= SECTIONS ================= */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
 
-      <Tooltip text="Enter the section name such as A, B or C.">
+            <div className="mb-5">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Sections
+                {selectedClass && (
+                  <span className="text-blue-600">
+                    {" "}({selectedClass.name})
+                  </span>
+                )}
+              </h2>
 
-        <input
-          type="text"
-          placeholder="Section"
-          value={sectionForm.name}
-          onChange={(e) =>
-            setSectionForm({
-              ...sectionForm,
-              name: e.target.value
-            })
-          }
-          className="
+              <p className="text-xs text-gray-500 mt-1">
+                Manage sections for the selected class
+              </p>
+            </div>
+
+
+            {/* Add Section */}
+            <form
+              onSubmit={handleSectionSubmit}
+              className="flex gap-2 mb-5"
+            >
+
+              <Tooltip text="Enter the section name such as A, B or C.">
+
+                <input
+                  type="text"
+                  placeholder="Section"
+                  value={sectionForm.name}
+                  onChange={(e) =>
+                    setSectionForm({
+                      ...sectionForm,
+                      name: e.target.value
+                    })
+                  }
+                  className="
             w-20
             border border-gray-300
             rounded-lg
@@ -281,25 +373,25 @@ export default function AcademicManagement() {
             focus:ring-green-500
             focus:border-green-500
           "
-          required
-        />
+                  required
+                />
 
-      </Tooltip>
+              </Tooltip>
 
 
-      <Tooltip text="Set the maximum number of students allowed in this section.">
+              <Tooltip text="Set the maximum number of students allowed in this section.">
 
-        <input
-          type="number"
-          placeholder="Capacity"
-          value={sectionForm.capacity}
-          onChange={(e) =>
-            setSectionForm({
-              ...sectionForm,
-              capacity: e.target.value
-            })
-          }
-          className="
+                <input
+                  type="number"
+                  placeholder="Capacity"
+                  value={sectionForm.capacity}
+                  onChange={(e) =>
+                    setSectionForm({
+                      ...sectionForm,
+                      capacity: e.target.value
+                    })
+                  }
+                  className="
             w-24
             border border-gray-300
             rounded-lg
@@ -310,16 +402,16 @@ export default function AcademicManagement() {
             focus:ring-green-500
             focus:border-green-500
           "
-          required
-        />
+                  required
+                />
 
-      </Tooltip>
+              </Tooltip>
 
 
-      <button
-        type="submit"
-        disabled={loading || !selectedClass}
-        className="
+              <button
+                type="submit"
+                disabled={loading || !selectedClass}
+                className="
           bg-green-600
           hover:bg-green-700
           disabled:bg-gray-300
@@ -332,38 +424,38 @@ export default function AcademicManagement() {
           transition
           shadow-sm
         "
-      >
-        Add
-      </button>
+              >
+                Add
+              </button>
 
-    </form>
+            </form>
 
 
-    {/* Sections List */}
-    <div className="space-y-2 max-h-96 overflow-y-auto">
+            {/* Sections List */}
+            <div className="space-y-2 max-h-96 overflow-y-auto">
 
-      {!selectedClass ? (
+              {!selectedClass ? (
 
-        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <p className="text-sm text-gray-500">
-            Select a class first.
-          </p>
-        </div>
+                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <p className="text-sm text-gray-500">
+                    Select a class first.
+                  </p>
+                </div>
 
-      ) : sections.length === 0 ? (
+              ) : sections.length === 0 ? (
 
-        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <p className="text-sm text-gray-500">
-            No sections found.
-          </p>
-        </div>
+                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <p className="text-sm text-gray-500">
+                    No sections found.
+                  </p>
+                </div>
 
-      ) : (
+              ) : (
 
-        sections.map((s) => (
-          <div
-            key={s._id}
-            className="
+                sections.map((s) => (
+                  <div
+                    key={s._id}
+                    className="
               flex
               justify-between
               items-center
@@ -375,63 +467,63 @@ export default function AcademicManagement() {
               px-3 py-2.5
               transition
             "
-          >
+                  >
 
-            <span className="font-medium text-gray-800">
-              {s.name}
-            </span>
+                    <span className="font-medium text-gray-800">
+                      {s.name}
+                    </span>
 
-            <span className="text-xs text-gray-500 bg-white border px-2 py-1 rounded-full">
-              Capacity: {s.capacity}
-            </span>
+                    <span className="text-xs text-gray-500 bg-white border px-2 py-1 rounded-full">
+                      Capacity: {s.capacity}
+                    </span>
 
+                  </div>
+                ))
+
+              )}
+
+            </div>
           </div>
-        ))
-
-      )}
-
-    </div>
-  </div>
 
 
-  {/* ================= SUBJECTS ================= */}
-  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          {/* ================= SUBJECTS ================= */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
 
-    <div className="mb-5">
-      <h2 className="text-lg font-semibold text-gray-900">
-        Subjects
-        {selectedClass && (
-          <span className="text-purple-600">
-            {" "}({selectedClass.name})
-          </span>
-        )}
-      </h2>
+            <div className="mb-5">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Subjects
+                {selectedClass && (
+                  <span className="text-purple-600">
+                    {" "}({selectedClass.name})
+                  </span>
+                )}
+              </h2>
 
-      <p className="text-xs text-gray-500 mt-1">
-        Manage subjects for the selected class
-      </p>
-    </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Manage subjects for the selected class
+              </p>
+            </div>
 
 
-    {/* Add Subject */}
-    <form
-      onSubmit={handleSubjectSubmit}
-      className="flex gap-2 mb-5"
-    >
+            {/* Add Subject */}
+            <form
+              onSubmit={handleSubjectSubmit}
+              className="flex gap-2 mb-5"
+            >
 
-      <Tooltip text="Add a subject such as Mathematics, Science or English.">
+              <Tooltip text="Add a subject such as Mathematics, Science or English.">
 
-        <input
-          type="text"
-          placeholder="Subject (e.g. Math)"
-          value={subjectForm.name}
-          onChange={(e) =>
-            setSubjectForm({
-              ...subjectForm,
-              name: e.target.value
-            })
-          }
-          className="
+                <input
+                  type="text"
+                  placeholder="Subject (e.g. Math)"
+                  value={subjectForm.name}
+                  onChange={(e) =>
+                    setSubjectForm({
+                      ...subjectForm,
+                      name: e.target.value
+                    })
+                  }
+                  className="
             flex-1
             min-w-0
             border border-gray-300
@@ -443,25 +535,25 @@ export default function AcademicManagement() {
             focus:ring-purple-500
             focus:border-purple-500
           "
-          required
-        />
+                  required
+                />
 
-      </Tooltip>
+              </Tooltip>
 
 
-      <Tooltip text="Use a short code such as MTH or ENG.">
+              <Tooltip text="Use a short code such as MTH or ENG.">
 
-        <input
-          type="text"
-          placeholder="Code"
-          value={subjectForm.code}
-          onChange={(e) =>
-            setSubjectForm({
-              ...subjectForm,
-              code: e.target.value
-            })
-          }
-          className="
+                <input
+                  type="text"
+                  placeholder="Code"
+                  value={subjectForm.code}
+                  onChange={(e) =>
+                    setSubjectForm({
+                      ...subjectForm,
+                      code: e.target.value
+                    })
+                  }
+                  className="
             w-20
             border border-gray-300
             rounded-lg
@@ -472,16 +564,16 @@ export default function AcademicManagement() {
             focus:ring-purple-500
             focus:border-purple-500
           "
-          required
-        />
+                  required
+                />
 
-      </Tooltip>
+              </Tooltip>
 
 
-      <button
-        type="submit"
-        disabled={loading || !selectedClass}
-        className="
+              <button
+                type="submit"
+                disabled={loading || !selectedClass}
+                className="
           bg-purple-600
           hover:bg-purple-700
           disabled:bg-gray-300
@@ -494,38 +586,38 @@ export default function AcademicManagement() {
           transition
           shadow-sm
         "
-      >
-        Add
-      </button>
+              >
+                Add
+              </button>
 
-    </form>
+            </form>
 
 
-    {/* Subjects List */}
-    <div className="space-y-2 max-h-96 overflow-y-auto">
+            {/* Subjects List */}
+            <div className="space-y-2 max-h-96 overflow-y-auto">
 
-      {!selectedClass ? (
+              {!selectedClass ? (
 
-        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <p className="text-sm text-gray-500">
-            Select a class first.
-          </p>
-        </div>
+                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <p className="text-sm text-gray-500">
+                    Select a class first.
+                  </p>
+                </div>
 
-      ) : subjects.length === 0 ? (
+              ) : subjects.length === 0 ? (
 
-        <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <p className="text-sm text-gray-500">
-            No subjects found.
-          </p>
-        </div>
+                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <p className="text-sm text-gray-500">
+                    No subjects found.
+                  </p>
+                </div>
 
-      ) : (
+              ) : (
 
-        subjects.map((s) => (
-          <div
-            key={s._id}
-            className="
+                subjects.map((s) => (
+                  <div
+                    key={s._id}
+                    className="
               flex
               items-center
               justify-between
@@ -537,25 +629,25 @@ export default function AcademicManagement() {
               px-3 py-2.5
               transition
             "
-          >
+                  >
 
-            <span className="font-medium text-gray-800">
-              {s.name}
-            </span>
+                    <span className="font-medium text-gray-800">
+                      {s.name}
+                    </span>
 
-            <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full font-medium">
-              {s.code}
-            </span>
+                    <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-full font-medium">
+                      {s.code}
+                    </span>
 
+                  </div>
+                ))
+
+              )}
+
+            </div>
           </div>
-        ))
 
-      )}
-
-    </div>
-  </div>
-
-</div>
+        </div>
       </DashboardLayout>
     )}</>);
 }

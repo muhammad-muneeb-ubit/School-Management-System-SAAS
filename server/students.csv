@@ -1,3 +1,14 @@
-firstName,lastName,rollNumber,gender,classId,sectionId,parentEmail,parentFirstName,parentPhone
-Shahmeer,Ali,006,Male,6a997e1fa5d14ddf186b5285,6a95638800ecd7a235ebf286,noshad@gmail.com,Noshad,03001122334
-Muhammad,Mudassir,007,Male,6a997e1fa5d14ddf186b5285,6a95638800ecd7a235ebf286,asif@gmail.com,Asif,03009988776
+firstName,lastName,rollNumber,gender,className,sectionName,parentEmail,parentFirstName,parentPhone
+Ahmed,Khan,001,Male,Grade 1,A,ahmed.khan@email.com,Ahmed Sr,03001234567
+Sana,Mir,010,Female,Grade 1,A,sana.mir@email.com,Sana Sr,03020234567
+Fatima,Noor,002,Female,Grade 1,B,fatima.noor@email.com,Fatima Sr,03012234567
+Bilal,Ahmed,015,Male,Grade 1,B,bilal.ahmed@email.com,Bilal Sr,03025234567
+Bilal,Raza,003,Male,Grade 2,A,bilal.raza@email.com,Bilal Sr,03013234567
+Zainab,Ali,004,Female,Grade 2,B,zainab.ali@email.com,Zainab Sr,03014234567
+Omar,Farooq,011,Male,Grade 2,B,omar.farooq@email.com,Omar Sr,03021234567
+Usman,Gill,005,Male,Grade 3,A,usman.gill@email.com,Usman Sr,03015234567
+Hira,Jamil,012,Female,Grade 3,A,hira.jamil@email.com,Hira Sr,03022234567
+Ayesha,Siddiqui,006,Female,Grade 3,B,ayesha.sidd@email.com,Ayesha Sr,03016234567
+Hassan,Malik,007,Male,Grade 4,A,hassan.malik@email.com,Hassan Sr,03017234567
+Maryam,Iqbal,008,Female,Grade 4,B,maryam.iqbal@email.com,Maryam Sr,03018234567
+Talha,Shah,013,Male,Grade 4,B,talha.shah@email.com,Talha Sr,03023234567

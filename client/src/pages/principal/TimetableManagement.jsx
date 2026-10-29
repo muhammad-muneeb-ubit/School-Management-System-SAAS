@@ -240,109 +240,109 @@ export default function TimetableManagement() {
 
                   <div className="w-full space-y-4">
 
-  {timetable.schedule.map((day, i) => (
-    <div
-      key={i}
-      className="border-l-4 border-blue-500 pl-3 sm:pl-4"
-    >
+                    {timetable.schedule.map((day, i) => (
+                      <div
+                        key={i}
+                        className="border-l-4 border-blue-500 pl-3 sm:pl-4"
+                      >
 
-      {/* Day */}
-      <h3 className="font-bold text-gray-700 text-sm sm:text-base mb-2">
-        {day.day}
-      </h3>
+                        {/* Day */}
+                        <h3 className="font-bold text-gray-700 text-sm sm:text-base mb-2">
+                          {day.day}
+                        </h3>
 
-      {Array.isArray(day.periods) && day.periods.length > 0 ? (
-        <div className="space-y-2">
+                        {Array.isArray(day.periods) && day.periods.length > 0 ? (
+                          <div className="space-y-2">
 
-          {day.periods.map((p, j) => (
+                            {day.periods.map((p, j) => (
 
-            <div key={j}>
+                              <div key={j}>
 
-              {/* ============================= */}
-              {/* LARGE SCREEN CARD              */}
-              {/* ============================= */}
+                                {/* ============================= */}
+                                {/* LARGE SCREEN CARD              */}
+                                {/* ============================= */}
 
-              <div className="hidden sm:grid grid-cols-[28%_32%_40%] items-center gap-2 bg-gray-50 p-3 rounded">
+                                <div className="hidden sm:grid grid-cols-[28%_32%_40%] items-center gap-2 bg-gray-50 p-3 rounded">
 
-                {/* Time */}
-                <span className="text-sm text-gray-700 truncate">
-                  {p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}
-                </span>
+                                  {/* Time */}
+                                  <span className="text-sm text-gray-700 truncate">
+                                    {p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}
+                                  </span>
 
-                {/* Subject */}
-                <span
-                  className="text-sm font-medium text-gray-900 truncate"
-                  title={p?.subjectId?.name || 'N/A'}
-                >
-                  {p?.subjectId?.name || 'N/A'}
-                </span>
+                                  {/* Subject */}
+                                  <span
+                                    className="text-sm font-medium text-gray-900 truncate"
+                                    title={p?.subjectId?.name || 'N/A'}
+                                  >
+                                    {p?.subjectId?.name || 'N/A'}
+                                  </span>
 
-                {/* Teacher */}
-                <span
-                  className="text-sm text-gray-500 truncate"
-                  title={`${p?.teacherId?.profile?.firstName || ''} ${p?.teacherId?.profile?.lastName || ''}`}
-                >
-                  {p?.teacherId?.profile?.firstName || ''}
-                  {' '}
-                  {p?.teacherId?.profile?.lastName || ''}
-                </span>
+                                  {/* Teacher */}
+                                  <span
+                                    className="text-sm text-gray-500 truncate"
+                                    title={`${p?.teacherId?.profile?.firstName || ''} ${p?.teacherId?.profile?.lastName || ''}`}
+                                  >
+                                    {p?.teacherId?.profile?.firstName || ''}
+                                    {' '}
+                                    {p?.teacherId?.profile?.lastName || ''}
+                                  </span>
 
-              </div>
+                                </div>
 
 
-              {/* ============================= */}
-              {/* SMALL SCREEN CARD              */}
-              {/* ============================= */}
+                                {/* ============================= */}
+                                {/* SMALL SCREEN CARD              */}
+                                {/* ============================= */}
 
-              <div className="sm:hidden bg-gray-50 rounded p-3">
+                                <div className="sm:hidden bg-gray-50 rounded p-3">
 
-                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center justify-between gap-2">
 
-                  {/* Time */}
-                  <span className="text-xs text-gray-600 font-medium">
-                    {p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}
-                  </span>
+                                    {/* Time */}
+                                    <span className="text-xs text-gray-600 font-medium">
+                                      {p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}
+                                    </span>
 
-                  {/* Subject */}
-                  <span
-                    className="text-sm font-semibold text-gray-900 text-right truncate"
-                    title={p?.subjectId?.name || 'N/A'}
-                  >
-                    {p?.subjectId?.name || 'N/A'}
-                  </span>
+                                    {/* Subject */}
+                                    <span
+                                      className="text-sm font-semibold text-gray-900 text-right truncate"
+                                      title={p?.subjectId?.name || 'N/A'}
+                                    >
+                                      {p?.subjectId?.name || 'N/A'}
+                                    </span>
 
-                </div>
+                                  </div>
 
-                {/* Teacher */}
-                <div
-                  className="mt-1 text-xs text-gray-500 truncate"
-                  title={`${p?.teacherId?.profile?.firstName || ''} ${p?.teacherId?.profile?.lastName || ''}`}
-                >
-                  {p?.teacherId?.profile?.firstName || ''}
-                  {' '}
-                  {p?.teacherId?.profile?.lastName || ''}
-                </div>
+                                  {/* Teacher */}
+                                  <div
+                                    className="mt-1 text-xs text-gray-500 truncate"
+                                    title={`${p?.teacherId?.profile?.firstName || ''} ${p?.teacherId?.profile?.lastName || ''}`}
+                                  >
+                                    {p?.teacherId?.profile?.firstName || ''}
+                                    {' '}
+                                    {p?.teacherId?.profile?.lastName || ''}
+                                  </div>
 
-              </div>
+                                </div>
 
-            </div>
+                              </div>
 
-          ))}
+                            ))}
 
-        </div>
+                          </div>
 
-      ) : (
+                        ) : (
 
-        <p className="text-xs text-gray-400 italic">
-          No periods added for this day.
-        </p>
+                          <p className="text-xs text-gray-400 italic">
+                            No periods added for this day.
+                          </p>
 
-      )}
+                        )}
 
-    </div>
-  ))}
+                      </div>
+                    ))}
 
-</div>
+                  </div>
                 ))}
               </div>
             </div>

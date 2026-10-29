@@ -6,6 +6,7 @@ import { downloadFile } from '../utils/downloadFile';
 import { showSuccess, showError, showConfirm } from '../utils/sweetAlert';
 import Tooltip from '../components/Tooltip';
 import { TableSkeleton, SearchBarSkeleton, HeadingWithButtonSkeleton } from '../components/skeletons';
+
 export default function Exams() {
     const [classes, setClasses] = useState([]);
     const [exams, setExams] = useState([]);
@@ -296,7 +297,7 @@ export default function Exams() {
                                                         </button>
 
                                                         {/* Result PDF */}
-                                                        {ex.status === 'Published' && (
+                                                        {user?.role === 'Principal' && ex.status === 'Published' && (
                                                             <button
                                                                 onClick={() =>
                                                                     downloadFile(

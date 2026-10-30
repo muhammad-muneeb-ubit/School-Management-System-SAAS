@@ -5,6 +5,7 @@ import api from '../../services/api';
 import { showSuccess, showError } from '../../utils/sweetAlert';
 import Loader from '../../components/Loader';
 import { DashboardHeaderSkeleton, ClassSectionFilterSkeleton, TimetableSkeleton } from '../../components/skeletons';
+import Swal from 'sweetalert2';
 
 export default function TimetableManagement() {
   const { user } = useSelector((state) => state.auth);
@@ -69,6 +70,7 @@ export default function TimetableManagement() {
       try {
         const res = await api.get(`/academic/timetable?classId=${selectedClass}&sectionId=${selectedSection}`);
         setTimetable(res.data);
+        console.log('Fetched timetable:', res.data.schedule);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
@@ -134,15 +136,88 @@ export default function TimetableManagement() {
     }
   };
 
+  const handleTimetableUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const confirm = await Swal.fire({
+      title: 'Import Timetable?',
+      text: 'This will overwrite existing timetables for the classes in the CSV file.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Import!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post('/academic/timetable/import', formData);
+      showSuccess(res.data.message);
+      if (selectedClass && selectedSection) fetchTimetable();
+    } catch (err) {
+      showError(err.response?.data?.error || 'Import failed. Check CSV format.');
+    } finally {
+      setLoading(false);
+      e.target.value = '';
+    }
+  };
+
+  const showTimetableCsvHelp = () => {
+    Swal.fire({
+      title: 'Timetable CSV Format Guide',
+      html: `
+            <div style="text-align: left; font-size: 14px;">
+                <p>Your CSV file <b>must</b> have the following headers exactly as written:</p>
+                <pre style="background: #f3f4f6; padding: 10px; border-radius: 5px; font-size: 12px; overflow-x: auto;">
+className,sectionName,day,startTime,endTime,subjectName,teacherEmail
+Grade 1,A,Monday,08:00,08:45,English,teacher.ali@sms.com
+Grade 1,A,Monday,08:45,09:30,Math,teacher.ali@sms.com
+Grade 1,B,Monday,08:00,08:45,English,teacher.ali@sms.com
+Grade 2,A,Monday,08:00,08:45,Science,teacher2@sms.com
+                </pre>
+                <ul style="margin-top: 10px; font-size: 13px;">
+                    <li><b>className</b> and <b>sectionName</b> must match exactly what you created in Academic Management.</li>
+                    <li><b>subjectName</b> must match exactly what you created for that class.</li>
+                    <li><b>teacherEmail</b> must be the email of an existing Teacher account.</li>
+                    <li><b>day</b> must be: Monday, Tuesday, Wednesday, Thursday, Friday, or Saturday.</li>
+                    <li><b>startTime</b> and <b>endTime</b> must be in 24-hour format (e.g., 08:00, 14:30).</li>
+                    <li>One CSV file can contain timetables for <b>all classes and sections</b> at once!</li>
+                </ul>
+            </div>
+        `,
+      icon: 'info',
+      confirmButtonText: 'Got it'
+    });
+  };
   return (
     <DashboardLayout>
       {/* <h1 className="text-2xl font-bold text-gray-800 mb-6">Timetable Management</h1> */}
       {loading ? (
         <DashboardHeaderSkeleton />
-      ) : (
+      ) : (<div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
           Timetable Management
         </h1>
+        <div className="flex items-center gap-2 mb-6">
+    <button 
+        onClick={showTimetableCsvHelp} 
+        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 font-medium text-sm"
+    >
+        CSV Help
+    </button>
+    <input type="file" accept=".csv" onChange={handleTimetableUpload} className="hidden" id="timetable-csv-upload" />
+    <label 
+        htmlFor="timetable-csv-upload" 
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium text-sm cursor-pointer"
+    >
+        Import Timetable CSV
+    </label>
+</div>
+</div>
       )}
 
       {/* Dynamic Filters based on Role */}
@@ -219,27 +294,26 @@ export default function TimetableManagement() {
           {loading ? <Loader /> : timetable && timetable.schedule ? (
             <div className="space-y-4 overflow-x-auto">
               <div className="W space-y-4">
-                {timetable.schedule.map((day, i) => (
-                  // <div key={i} className="border-l-4 border-blue-500 pl-3">
-                  //   <h3 className="font-bold text-gray-700">{day.day}</h3>
-                  //   <div className="mt-2 space-y-1">
-                  //     {Array.isArray(day.periods) && day.periods.length > 0 ? (
-                  //       day.periods.map((p, j) => (
-                  //         <div key={j} className="text-sm bg-gray-50 p-2 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                  //           <span>{p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}</span>
-                  //           <span className="font-medium">{p?.subjectId?.name || 'N/A'}</span>
-                  //           <span className="text-gray-500">{p?.teacherId?.profile?.firstName} {p?.teacherId?.profile?.lastName || ''}</span>
-                  //         </div>
-                  //       ))
-                  //     ) : (
-                  //       <p className="text-xs text-gray-400 italic">No periods added for this day.</p>
-                  //     )}
-                  //   </div>
-                  // </div>
+                {/* {timetable.schedule.map((day, i) => (
+                   <div key={i} className="border-l-4 border-blue-500 pl-3">
+                     <h3 className="font-bold text-gray-700">{day.day}</h3>
+                     <div className="mt-2 space-y-1">
+                       {Array.isArray(day.periods) && day.periods.length > 0 ? (
+                         day.periods.map((p, j) => (
+                           <div key={j} className="text-sm bg-gray-50 p-2 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                             <span>{p?.startTime || 'N/A'} - {p?.endTime || 'N/A'}</span>
+                             <span className="font-medium">{p?.subjectId?.name || 'N/A'}</span>
+                             <span className="text-gray-500">{p?.teacherId?.profile?.firstName} {p?.teacherId?.profile?.lastName || ''}</span>
+                           </div>
+                         ))
+                       ) : (
+                         <p className="text-xs text-gray-400 italic">No periods added for this day.</p>
+                       )}
+                     </div>
+                   </div> */}
 
 
                   <div className="w-full space-y-4">
-
                     {timetable.schedule.map((day, i) => (
                       <div
                         key={i}
@@ -341,9 +415,8 @@ export default function TimetableManagement() {
 
                       </div>
                     ))}
-
                   </div>
-                ))}
+                {/* ))} */}
               </div>
             </div>
           ) : (

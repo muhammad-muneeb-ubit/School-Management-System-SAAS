@@ -2,6 +2,7 @@ import express from 'express';
 import { createSession, setCurrentSession, createClass, getClasses, createSection, createSubject, getSections, getSubjects, getSessions } from '../controllers/academicController.js';
 import { setTimetable, getTimetable, getMyTimetable } from '../controllers/timetableController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
+import { bulkImportTimetable } from '../controllers/timetableImportController.js';
 
 const router = express.Router();
 
@@ -29,4 +30,6 @@ router.put('/timetable', protect, authorize('Principal'), setTimetable);
 router.get('/timetable', protect, authorize('Principal', 'Teacher', 'Parent'), getTimetable);
 router.get('/timetable/my-timetable', protect, authorize('Teacher'), getMyTimetable);
 
+
+router.post('/timetable/import', protect, authorize('Principal'), bulkImportTimetable);
 export default router;

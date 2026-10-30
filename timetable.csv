@@ -1,0 +1,10 @@
+className,sectionName,day,startTime,endTime,subjectName,teacherEmail
+Grade 1,A,Monday,08:00,08:45,English,teacher.ali@sms.com
+Grade 1,A,Monday,08:45,09:30,Math,teacher.ali@sms.com
+Grade 1,A,Monday,09:30,10:15,Science,teacher.ali@sms.com
+Grade 1,A,Tuesday,08:00,08:45,English,teacher.ali@sms.com
+Grade 1,A,Tuesday,08:45,09:30,Math,teacher.ali@sms.com
+Grade 1,B,Monday,08:00,08:45,English,teacher.ali@sms.com
+Grade 1,B,Monday,08:45,09:30,Math,teacher.ali@sms.com
+Grade 2,A,Monday,08:00,08:45,English,teacher.ali@sms.com
+Grade 2,A,Monday,08:45,09:30,Math,teacher.ali@sms.com
